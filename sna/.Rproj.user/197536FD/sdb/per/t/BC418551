@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "AGE,TENURE,LEVEL,DEPT\n1,33,9.333,3,4\n2,42,19.583,2,4\n3,40,12.75,3,2\n4,33,7.5,3,4\n5,32,3.333,3,2\n6,59,28,3,1\n7,55,30,1,0\n8,34,11.333,3,1\n9,62,5.417,3,2\n10,37,9.25,3,3\n11,46,27,3,3\n12,34,8.917,3,1\n13,48,0.25,3,2\n14,43,10.417,2,2\n15,40,8.417,3,2\n16,27,4.667,3,4\n17,30,12.417,3,1\n18,33,9.083,2,3\n19,32,4.833,3,2\n20,38,11.667,3,2\n21,36,12.5,2,1\n",
+    "created" : 1480951696798.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2417322840",
+    "id" : "BC418551",
+    "lastKnownWriteTime" : 1280789895,
+    "last_content_update" : 1280789895,
+    "path" : "~/hackntu2016_sna/lab_1/Krack-High-Tec-Attributes.csv",
+    "project_path" : "lab_1/Krack-High-Tec-Attributes.csv",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "text"
+}

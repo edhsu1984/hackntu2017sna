@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "lab_1_slide\n========================================================\nauthor: \ndate: \nautosize: true\n\nFirst Slide\n========================================================\n涵蓋一些基本的R命令，加載和管理數據、圖形可視化及匯出數據以供其他地方使用。\n\n本次教學會運用到的Ｒ套件為：\n- Bullet 1\n- igraph\n\n\nigraph 套件\n========================================================\n\nigraph 套件很適合用來分析 graph 與 network 類型的數據，內建函式包含三個方向\n- graph generating\n- visualization\n- analysis method\n\n說明文件: <http://cran.r-project.org/web/packages/igraph/igraph.pdf>\n\n```{r}\n# 使用 console 安裝 igraph \ninstall.packages(\"igraph\")\n\n# 載入 igraph 套件\nlibrary(igraph) \n```\n\n\n用 read.table() 載入些資料小試牛刀吧\n========================================================\n\nread.table('path/to/file') 可以從網路或本機載入資料\n\n```{r}\n# 必要時須設定檔案所在路徑之檔案夾\n# setwd('./lab_1')\n\nadvice_data_frame <- read.table('Krack-High-Tec-edgelist-Advice.txt')\n\nfriendship_data_frame <- read.table('Krack-High-Tec-edgelist-Friendship.txt')\n\nreports_to_data_frame <- read.table('https://goo.gl/W1YP8P')\n```\n\n\n當然用 read.csv() 也 OK\n========================================================\n\nread.csv() 也跟 read.table() 很像，可以從網路或本機載入資料\n\n```{r}\n# 必要時須設定檔案所在路徑之檔案夾\n# setwd('./lab_1')\n\nattributes <- read.csv('Krack-High-Tec-Attributes.csv', header=T)\n\nhead(attributes)\n```\n\n\n\n\nSlide With Code\n========================================================\n\n```{r}\nsummary(cars)\n```\n\nSlide With Plot\n========================================================\n\n```{r, echo=FALSE}\nplot(cars)\n```\n",
+    "created" : 1480945869067.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3245658788",
+    "id" : "E880A029",
+    "lastKnownWriteTime" : 1480952496,
+    "last_content_update" : 1480952496886,
+    "path" : "~/hackntu2016_sna/lab_1/lab_1_slide.Rpres",
+    "project_path" : "lab_1/lab_1_slide.Rpres",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_presentation"
+}
