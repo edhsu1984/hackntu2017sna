@@ -1,4 +1,4 @@
-lab_2
+Lab 2
 ========================================================
 author: 
 date: 
@@ -14,66 +14,65 @@ For more details on authoring R presentations please visit <https://support.rstu
 - Bullet 3
 
 
-========================================================
-
-
-####################################################################
-# LAB 2: Methodological beginnings - Density, Reciprocity, Triads, #
-# Transitivity, and heterogeneity. Node and network statistics.    #
-####################################################################
-
-
-# NOTE: if you have trouble because some packages are not installed, 
-# see lab 1 for instructions on how to install all necessary packages. 
-# Also see Lab 1 for prior functions.
 
 
 ========================================================
 
-
-##############################################################
-# 
-# Lab 2 
-#
-# The purpose of this lab is to acquire basic cohesion 
-# metrics of density, reciprocity, reach, path distance, 
-# and transitivity. In addition, we'll develop triadic 
-# analyses and a measure of ego-network heterogenity. 
-#
-##############################################################
+LAB 2: Methodological beginnings - Density, Reciprocity, Triads, 
+Transitivity, and heterogeneity. Node and network statistics.
 
 
 
-SET UP SESSION
 ========================================================
-```{r}
-install.packages("NetData")
+Lab 2 
+
+The purpose of this lab is to acquire basic cohesion 
+metrics of density, reciprocity, reach, path distance, 
+and transitivity. In addition, we'll develop triadic 
+analyses and a measure of ego-network heterogenity. 
+
+
+
+
+LOAD DATA
+========================================================
+```{r, echo=FALSE}
+#install.packages("NetData")
 ```
 
 ```{r}
 library(igraph)
 library(NetData)
+data(kracknets, package = "NetData")
 ```
 
- 
-LOAD DATA
+
+
+
 ========================================================
 
-```{r}
+```{r, echo=FALSE}
 # We would ordinarily need to follow the same proceedure we did for the Krackhardt data
 # as we did in lab 1; see that lab for detail.
 
-data(kracknets, package = "NetData")
 
 # Reduce to non-zero edges and build a graph object
-krack_full_nonzero_edges <- subset(krack_full_data_frame, (advice_tie > 0 | friendship_tie > 0 | reports_to_tie > 0))
-head(krack_full_nonzero_edges)
+krack_full_nonzero_edges <- subset(
+  krack_full_data_frame, 
+  (advice_tie > 0 | friendship_tie > 0 | reports_to_tie > 0)
+)
 
+head(krack_full_nonzero_edges)
+```
+
+```{r, echo=FALSE}
 krack_full <- graph.data.frame(krack_full_nonzero_edges) 
 summary(krack_full)
 ```
 
 
+
+Set vertex attributes
 ========================================================
 
 ```{r}
@@ -87,25 +86,51 @@ summary(krack_full)
 ```
 
 
+
+
 ========================================================
 
-```{r}
+```{r, echo=FALSE}
 # Create sub-graphs based on edge attributes
-krack_advice <- delete.edges(krack_full, E(krack_full)[get.edge.attribute(krack_full,name = "advice_tie")==0])
+krack_advice <- delete.edges(
+  krack_full, 
+  E(krack_full)[get.edge.attribute(krack_full,name = "advice_tie")==0]
+)
+
 summary(krack_advice)
+plot(krack_advice)
 ```
 
-```{r}
-krack_friendship <- delete.edges(krack_full, E(krack_full)[get.edge.attribute(krack_full,name = "friendship_tie")==0])
+
+
+========================================================
+
+```{r, echo=FALSE}
+krack_friendship <- delete.edges(
+  krack_full, 
+  E(krack_full)[get.edge.attribute(krack_full,name = "friendship_tie")==0]
+)
+
 summary(krack_friendship)
+plot(krack_friendship)
 ```
 
-```{r}
-krack_reports_to <- delete.edges(krack_full, E(krack_full)[get.edge.attribute(krack_full,name = "reports_to_tie")==0])
+
+
+========================================================
+
+```{r, echo=FALSE}
+krack_reports_to <- delete.edges(
+  krack_full, 
+  E(krack_full)[get.edge.attribute(krack_full,name = "reports_to_tie")==0]
+)
+
 summary(krack_reports_to)
+plot(krack_reports_to)
 ```
 
- 
+
+
 NODE-LEVEL STATISTICS
 ========================================================
 

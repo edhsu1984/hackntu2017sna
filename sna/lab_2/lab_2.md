@@ -1,4 +1,4 @@
-lab_2
+Lab 2
 ========================================================
 author: 
 date: 
@@ -14,64 +14,42 @@ For more details on authoring R presentations please visit <https://support.rstu
 - Bullet 3
 
 
-========================================================
-
-
-####################################################################
-# LAB 2: Methodological beginnings - Density, Reciprocity, Triads, #
-# Transitivity, and heterogeneity. Node and network statistics.    #
-####################################################################
-
-
-# NOTE: if you have trouble because some packages are not installed, 
-# see lab 1 for instructions on how to install all necessary packages. 
-# Also see Lab 1 for prior functions.
 
 
 ========================================================
 
-
-##############################################################
-# 
-# Lab 2 
-#
-# The purpose of this lab is to acquire basic cohesion 
-# metrics of density, reciprocity, reach, path distance, 
-# and transitivity. In addition, we'll develop triadic 
-# analyses and a measure of ego-network heterogenity. 
-#
-##############################################################
+LAB 2: Methodological beginnings - Density, Reciprocity, Triads, 
+Transitivity, and heterogeneity. Node and network statistics.
 
 
 
-SET UP SESSION
+========================================================
+Lab 2 
+
+The purpose of this lab is to acquire basic cohesion 
+metrics of density, reciprocity, reach, path distance, 
+and transitivity. In addition, we'll develop triadic 
+analyses and a measure of ego-network heterogenity. 
+
+
+
+
+LOAD DATA
 ========================================================
 
-```r
-install.packages("NetData")
-```
 
 
 ```r
 library(igraph)
 library(NetData)
+data(kracknets, package = "NetData")
 ```
 
- 
-LOAD DATA
+
+
+
 ========================================================
 
-
-```r
-# We would ordinarily need to follow the same proceedure we did for the Krackhardt data
-# as we did in lab 1; see that lab for detail.
-
-data(kracknets, package = "NetData")
-
-# Reduce to non-zero edges and build a graph object
-krack_full_nonzero_edges <- subset(krack_full_data_frame, (advice_tie > 0 | friendship_tie > 0 | reports_to_tie > 0))
-head(krack_full_nonzero_edges)
-```
 
 ```
    ego alter advice_tie friendship_tie reports_to_tie
@@ -83,10 +61,6 @@ head(krack_full_nonzero_edges)
 18   1    18          1              0              0
 ```
 
-```r
-krack_full <- graph.data.frame(krack_full_nonzero_edges) 
-summary(krack_full)
-```
 
 ```
 IGRAPH DN-- 21 232 -- 
@@ -95,6 +69,8 @@ IGRAPH DN-- 21 232 --
 ```
 
 
+
+Set vertex attributes
 ========================================================
 
 
@@ -116,14 +92,10 @@ IGRAPH DN-- 21 232 --
 ```
 
 
+
+
 ========================================================
 
-
-```r
-# Create sub-graphs based on edge attributes
-krack_advice <- delete.edges(krack_full, E(krack_full)[get.edge.attribute(krack_full,name = "advice_tie")==0])
-summary(krack_advice)
-```
 
 ```
 IGRAPH DN-- 21 190 -- 
@@ -132,11 +104,12 @@ IGRAPH DN-- 21 190 --
 | (e/n)
 ```
 
+![plot of chunk unnamed-chunk-6](lab_2-figure/unnamed-chunk-6-1.png)
 
-```r
-krack_friendship <- delete.edges(krack_full, E(krack_full)[get.edge.attribute(krack_full,name = "friendship_tie")==0])
-summary(krack_friendship)
-```
+
+
+========================================================
+
 
 ```
 IGRAPH DN-- 21 102 -- 
@@ -145,11 +118,12 @@ IGRAPH DN-- 21 102 --
 | (e/n)
 ```
 
+![plot of chunk unnamed-chunk-7](lab_2-figure/unnamed-chunk-7-1.png)
 
-```r
-krack_reports_to <- delete.edges(krack_full, E(krack_full)[get.edge.attribute(krack_full,name = "reports_to_tie")==0])
-summary(krack_reports_to)
-```
+
+
+========================================================
+
 
 ```
 IGRAPH DN-- 21 20 -- 
@@ -158,7 +132,10 @@ IGRAPH DN-- 21 20 --
 | (e/n)
 ```
 
- 
+![plot of chunk unnamed-chunk-8](lab_2-figure/unnamed-chunk-8-1.png)
+
+
+
 NODE-LEVEL STATISTICS
 ========================================================
 
@@ -828,4 +805,4 @@ summary(cars)
 Slide With Plot
 ========================================================
 
-![plot of chunk unnamed-chunk-21](lab_2-figure/unnamed-chunk-21-1.png)
+![plot of chunk unnamed-chunk-22](lab_2-figure/unnamed-chunk-22-1.png)

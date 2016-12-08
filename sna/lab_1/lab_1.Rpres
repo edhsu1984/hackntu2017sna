@@ -1,4 +1,4 @@
-lab_1_slide
+Lab 1
 ========================================================
 author: 
 date: 
@@ -12,127 +12,32 @@ First Slide
 涵蓋一些基本的R命令，加載和管理數據、圖形可視化及匯出數據以供其他地方使用。
 
 本次教學會運用到的Ｒ套件為：
-- Bullet 1
 - igraph
 
 
 
-用 read.table() 載入些資料小試牛刀吧
+SET UP SESSION
 ========================================================
 
-read.table('path/to/file') 可以從網路或本機載入資料
-
-```{r}
-# 設定檔案所在路徑之檔案夾
-setwd('~/hackntu2016_sna/lab_1')
-
-advice_data_frame <- read.table('Krack-High-Tec-edgelist-Advice.txt')
-
-friendship_data_frame <- read.table('Krack-High-Tec-edgelist-Friendship.txt')
-
-reports_to_data_frame <- read.table('https://goo.gl/W1YP8P')
-```
-
-
-
-可以用 head()、tail() 觀察載入的資料
-========================================================
-
-```{r}
-# 確認資料的型態
-typeof(advice_data_frame)
-class(advice_data_frame)
+```{r, echo=FALSE}
+#install.packages("NetData")
 ```
 
 ```{r}
-# head()、tail() 顧名思義
-head(advice_data_frame)
+library(igraph)
+library(NetData)
 ```
 
 
-
-當然用 read.csv() 也 OK
+ 
+LOAD DATA
 ========================================================
 
-read.csv() 也跟 read.table() 很像，可以從網路或本機載入資料
-
 ```{r}
-# 設定檔案所在路徑之檔案夾
-setwd('~/hackntu2016_sna/lab_1')
+# We would ordinarily need to follow the same proceedure we did for the Krackhardt data
+# as we did in lab 1; see that lab for detail.
 
-attributes <- read.csv('Krack-High-Tec-Attributes.csv', header=T)
-
-head(attributes)
-```
-
-
-
-針對連續的資料集可以用 summary() 
-========================================================
-
-針對連續的資料型態，可以用 summary() 可以很快地看出資料的分佈狀況
-
-```{r}
-summary(attributes)
-```
-
-
-
-用 colnames() 標示各行的名稱
-========================================================
-
-為了方便，我們可以用 colnames() 標示各行的名稱
-
-```{r}
-# c() is a common generic R function that combines its arguments into a single vector.
-
-colnames(advice_data_frame) <- c('ego', 'alter', 'advice_tie')
-head(advice_data_frame)
-```  
-
-
-
-用 colnames() 標示各行的名稱
-========================================================
-
-同上一張投影片，我們也將 friendship_data_frame、reports_to_data_frame 標示各行的名稱
-
-```{r}
-colnames(friendship_data_frame) <- c('ego', 'alter', 'friendship_tie')
-head(friendship_data_frame)
-```
-
-```{r}
-colnames(reports_to_data_frame) <- c('ego', 'alter', 'reports_to_tie')
-head(reports_to_data_frame)
-```
-
-
-
-將三個 dataframe 合併為一
-========================================================
-
-方便後續處理
-
-```{r}
-# Now that we've verified they are all the same, we can combine them into a single data frame. 
-krack_full_data_frame <- cbind(
-  advice_data_frame, 
-  friendship_data_frame$friendship_tie, 
-  reports_to_data_frame$reports_to_tie
-)
-```
-
-
-
-========================================================
-
-更改一下 columns 的名稱避免混淆
-
-```{r}
-names(krack_full_data_frame)[4:5] <- c("friendship_tie", "reports_to_tie")  
-
-head(krack_full_data_frame)
+data(kracknets, package = "NetData")
 ```
 
 
@@ -174,6 +79,7 @@ library(igraph)
 ```
 
 
+
 來熟悉一下 igraph 套件的操作
 ========================================================
 
@@ -183,6 +89,11 @@ krack_full <- graph.data.frame(krack_full_nonzero_edges)
 
 # 看一下載入的狀況 
 summary(krack_full)
+```
+
+```{r , echo=FALSE}
+setwd('~/hackntu2016/sna/lab_1/')
+write.graph(krack_full, file='krack_full_1.txt', format="edgelist")
 ```
 
 

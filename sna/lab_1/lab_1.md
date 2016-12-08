@@ -1,4 +1,4 @@
-lab_1_slide
+Lab 1
 ========================================================
 author: 
 date: 
@@ -12,218 +12,32 @@ First Slide
 涵蓋一些基本的R命令，加載和管理數據、圖形可視化及匯出數據以供其他地方使用。
 
 本次教學會運用到的Ｒ套件為：
-- Bullet 1
 - igraph
 
 
 
-用 read.table() 載入些資料小試牛刀吧
+SET UP SESSION
 ========================================================
 
-read.table('path/to/file') 可以從網路或本機載入資料
+
 
 
 ```r
-# 設定檔案所在路徑之檔案夾
-setwd('~/hackntu2016_sna/lab_1')
-
-advice_data_frame <- read.table('Krack-High-Tec-edgelist-Advice.txt')
-
-friendship_data_frame <- read.table('Krack-High-Tec-edgelist-Friendship.txt')
-
-reports_to_data_frame <- read.table('https://goo.gl/W1YP8P')
+library(igraph)
+library(NetData)
 ```
 
 
-
-可以用 head()、tail() 觀察載入的資料
+ 
+LOAD DATA
 ========================================================
 
 
 ```r
-# 確認資料的型態
-typeof(advice_data_frame)
-```
+# We would ordinarily need to follow the same proceedure we did for the Krackhardt data
+# as we did in lab 1; see that lab for detail.
 
-```
-[1] "list"
-```
-
-```r
-class(advice_data_frame)
-```
-
-```
-[1] "data.frame"
-```
-
-
-```r
-# head()、tail() 顧名思義
-head(advice_data_frame)
-```
-
-```
-  V1 V2 V3
-1  1  1  0
-2  1  2  1
-3  1  3  0
-4  1  4  1
-5  1  5  0
-6  1  6  0
-```
-
-
-
-當然用 read.csv() 也 OK
-========================================================
-
-read.csv() 也跟 read.table() 很像，可以從網路或本機載入資料
-
-
-```r
-# 設定檔案所在路徑之檔案夾
-setwd('~/hackntu2016_sna/lab_1')
-
-attributes <- read.csv('Krack-High-Tec-Attributes.csv', header=T)
-
-head(attributes)
-```
-
-```
-  AGE TENURE LEVEL DEPT
-1  33  9.333     3    4
-2  42 19.583     2    4
-3  40 12.750     3    2
-4  33  7.500     3    4
-5  32  3.333     3    2
-6  59 28.000     3    1
-```
-
-
-
-針對連續的資料集可以用 summary() 
-========================================================
-
-針對連續的資料型態，可以用 summary() 可以很快地看出資料的分佈狀況
-
-
-```r
-summary(attributes)
-```
-
-```
-      AGE            TENURE           LEVEL            DEPT     
- Min.   :27.00   Min.   : 0.250   Min.   :1.000   Min.   :0.00  
- 1st Qu.:33.00   1st Qu.: 7.500   1st Qu.:3.000   1st Qu.:1.00  
- Median :37.00   Median : 9.333   Median :3.000   Median :2.00  
- Mean   :39.71   Mean   :11.746   Mean   :2.714   Mean   :2.19  
- 3rd Qu.:43.00   3rd Qu.:12.500   3rd Qu.:3.000   3rd Qu.:3.00  
- Max.   :62.00   Max.   :30.000   Max.   :3.000   Max.   :4.00  
-```
-
-
-
-用 colnames() 標示各行的名稱
-========================================================
-
-為了方便，我們可以用 colnames() 標示各行的名稱
-
-
-```r
-# c() is a common generic R function that combines its arguments into a single vector.
-
-colnames(advice_data_frame) <- c('ego', 'alter', 'advice_tie')
-head(advice_data_frame)
-```
-
-```
-  ego alter advice_tie
-1   1     1          0
-2   1     2          1
-3   1     3          0
-4   1     4          1
-5   1     5          0
-6   1     6          0
-```
-
-
-
-用 colnames() 標示各行的名稱
-========================================================
-
-同上一張投影片，我們也將 friendship_data_frame、reports_to_data_frame 標示各行的名稱
-
-
-```r
-colnames(friendship_data_frame) <- c('ego', 'alter', 'friendship_tie')
-head(friendship_data_frame)
-```
-
-```
-  ego alter friendship_tie
-1   1     1              0
-2   1     2              1
-3   1     3              0
-4   1     4              1
-5   1     5              0
-6   1     6              0
-```
-
-
-```r
-colnames(reports_to_data_frame) <- c('ego', 'alter', 'reports_to_tie')
-head(reports_to_data_frame)
-```
-
-```
-  ego alter reports_to_tie
-1   1     1              0
-2   1     2              1
-3   1     3              0
-4   1     4              0
-5   1     5              0
-6   1     6              0
-```
-
-
-
-將三個 dataframe 合併為一
-========================================================
-
-方便後續處理
-
-
-```r
-# Now that we've verified they are all the same, we can combine them into a single data frame. 
-krack_full_data_frame <- cbind(
-  advice_data_frame, 
-  friendship_data_frame$friendship_tie, 
-  reports_to_data_frame$reports_to_tie
-)
-```
-
-
-
-========================================================
-
-更改一下 columns 的名稱避免混淆
-
-
-```r
-names(krack_full_data_frame)[4:5] <- c("friendship_tie", "reports_to_tie")  
-
-head(krack_full_data_frame)
-```
-
-```
-  ego alter advice_tie friendship_tie reports_to_tie
-1   1     1          0              0              0
-2   1     2          1              1              1
-3   1     3          0              0              0
-4   1     4          1              1              0
-5   1     5          0              0              0
-6   1     6          0              0              0
+data(kracknets, package = "NetData")
 ```
 
 
@@ -278,6 +92,7 @@ library(igraph)
 ```
 
 
+
 來熟悉一下 igraph 套件的操作
 ========================================================
 
@@ -295,6 +110,8 @@ IGRAPH DN-- 21 232 --
 + attr: name (v/c), advice_tie (e/n), friendship_tie (e/n),
 | reports_to_tie (e/n)
 ```
+
+
 
 
 
@@ -491,7 +308,7 @@ let's visualize the network with all possible ties with plot()
 plot(krack_full)
 ```
 
-![plot of chunk unnamed-chunk-22](lab_1_slide-figure/unnamed-chunk-22-1.png)
+![plot of chunk unnamed-chunk-16](lab_1-figure/unnamed-chunk-16-1.png)
 
 看起來一整個混亂，所以讓我們看看單邊類型(single edge types)的網絡。
 
@@ -543,7 +360,7 @@ IGRAPH DN-- 21 190 --
 plot(krack_advice_only)
 ```
 
-![plot of chunk unnamed-chunk-25](lab_1_slide-figure/unnamed-chunk-25-1.png)
+![plot of chunk unnamed-chunk-19](lab_1-figure/unnamed-chunk-19-1.png)
 
 
 friendship only
@@ -575,7 +392,7 @@ friendship only
 plot(krack_friendship_only)
 ```
 
-![plot of chunk unnamed-chunk-27](lab_1_slide-figure/unnamed-chunk-27-1.png)
+![plot of chunk unnamed-chunk-21](lab_1-figure/unnamed-chunk-21-1.png)
 
 
 reports-to only
@@ -607,7 +424,7 @@ reports-to only
 plot(krack_reports_to_only)
 ```
 
-![plot of chunk unnamed-chunk-29](lab_1_slide-figure/unnamed-chunk-29-1.png)
+![plot of chunk unnamed-chunk-23](lab_1-figure/unnamed-chunk-23-1.png)
 
 
 
@@ -630,7 +447,7 @@ reports_to_layout <- layout.fruchterman.reingold(krack_reports_to_only)
 plot(krack_reports_to_only, layout=reports_to_layout)
 ```
 
-![plot of chunk unnamed-chunk-30](lab_1_slide-figure/unnamed-chunk-30-1.png)
+![plot of chunk unnamed-chunk-24](lab_1-figure/unnamed-chunk-24-1.png)
 
 
 
@@ -666,7 +483,7 @@ plot(
 )
 ```
 
-![plot of chunk unnamed-chunk-32](lab_1_slide-figure/unnamed-chunk-32-1.png)
+![plot of chunk unnamed-chunk-26](lab_1-figure/unnamed-chunk-26-1.png)
 
 
 
@@ -685,7 +502,7 @@ plot(krack_reports_to_only,
      vertex.size=tenure_vertex_sizes)
 ```
 
-![plot of chunk unnamed-chunk-33](lab_1_slide-figure/unnamed-chunk-33-1.png)
+![plot of chunk unnamed-chunk-27](lab_1-figure/unnamed-chunk-27-1.png)
 
 
 ========================================================
@@ -719,7 +536,7 @@ plot(krack_full,
      vertex.size=tenure_vertex_sizes)
 ```
 
-![plot of chunk unnamed-chunk-35](lab_1_slide-figure/unnamed-chunk-35-1.png)
+![plot of chunk unnamed-chunk-29](lab_1-figure/unnamed-chunk-29-1.png)
 
 
 
@@ -743,7 +560,7 @@ plot(
 )
 ```
 
-![plot of chunk unnamed-chunk-36](lab_1_slide-figure/unnamed-chunk-36-1.png)
+![plot of chunk unnamed-chunk-30](lab_1-figure/unnamed-chunk-30-1.png)
   
   
 
