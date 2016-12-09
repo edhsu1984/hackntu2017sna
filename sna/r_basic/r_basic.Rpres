@@ -6,14 +6,12 @@ autosize: true
 
 
 
-First Slide
+重點
 ========================================================
 
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
-
 - 讀取資料
-- Bullet 2
-- Bullet 3
+- 整理資料 (標記、合併表格)
+- 利用 head()、tail()、summary() 做簡單的資料觀察
 
 
 
