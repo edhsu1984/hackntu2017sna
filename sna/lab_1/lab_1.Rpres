@@ -9,49 +9,79 @@ autosize: true
 First Slide
 ========================================================
 
-涵蓋一些基本的R命令，加載和管理數據、圖形可視化及匯出數據以供其他地方使用。
+涵蓋一些基本的 R 指令，加載和管理數據、圖形可視化及匯出數據以供其他地方使用。
 
-本次教學會運用到的Ｒ套件為：
+本次教學會運用到的 R 套件為：
 - igraph
+- NetData (本次 workshop 主要示範及操作的數據集)
 
 
 
-SET UP SESSION
+先來說說 Kracknets 數據集
 ========================================================
 
-```{r, echo=FALSE}
-#install.packages("NetData")
-```
+Kracknets 這個數據集主要是描述 Silicon Systems 這間高科技公司內員工之間的關係，當初是為了要研究哪一種人際網路會影響團體內部的輿論形成，主要包含下面這三種關係．
+- attribute (員工屬性)
+- advice_tie (員工間友誼的關係)
+- friendship_tie (員工間尋求建議的關係)
+- reports_to_tie (員工間上下回報的關係)
+
+說明文件: <https://cran.r-project.org/web/packages/NetData/NetData.pdf>
+
+
+
+安裝、載入套件及數據集
+========================================================
 
 ```{r}
-library(igraph)
+# 安裝套件 (目前環境已安裝)
+# install.packages("NetData")
+
+# 載入 NetData 套件
 library(NetData)
-```
 
-
- 
-LOAD DATA
-========================================================
-
-```{r}
-# We would ordinarily need to follow the same proceedure we did for the Krackhardt data
-# as we did in lab 1; see that lab for detail.
-
+# 載入 kracknets 數據集
 data(kracknets, package = "NetData")
 ```
 
 
 
-一點簡單的資料清洗
+來看看資料長什麼樣子吧 - 員工屬性
 ========================================================
 
-為簡化表格，我們利用 subset() 將沒有關聯的列 (edge) 去掉
+```{r}
+head(attributes)
+summary(attributes)
+```
+
+
+
+來看看資料長什麼樣子吧 - 員工之間的關係
+========================================================
 
 ```{r}
-krack_full_nonzero_edges <- subset(
-  krack_full_data_frame, 
-  (advice_tie > 0 | friendship_tie > 0 | reports_to_tie > 0)
-)
+head(krack_full_data_frame)
+```
+
+```{r, echo=FALSE}
+# 先來畫個圖
+library(igraph)
+
+krack_full_nonzero_edges <- subset(krack_full_data_frame, (advice_tie > 0 | friendship_tie > 0 | reports_to_tie > 0))
+
+krack_full <- graph.data.frame(krack_full_nonzero_edges) 
+plot(krack_full)
+```
+
+
+
+一點簡單的資料整理
+========================================================
+
+為了簡化資料，我們利用 subset() 將一些沒有關聯的列 (edge) 去掉，只剩下有關聯的資料
+
+```{r}
+krack_full_nonzero_edges <- subset(krack_full_data_frame, (advice_tie > 0 | friendship_tie > 0 | reports_to_tie > 0))
 
 head(krack_full_nonzero_edges)
 ```
@@ -68,14 +98,24 @@ igraph 套件很適合用來分析 graph 與 network 類型的數據，內建函
 
 說明文件: <http://cran.r-project.org/web/packages/igraph/igraph.pdf>
 
+
+
+安裝、載入套件
+========================================================
+
 ```{r}
-# 使用 console 安裝 igraph 
+# 載入 igraph 套件
+library(igraph) 
+```
+
+```{r}
+# 安裝套件 (目前環境已安裝)
 # install.packages("igraph")
 ```
 
 ```{r}
 # 載入 igraph 套件
-library(igraph) 
+library(igraph)
 ```
 
 
@@ -83,205 +123,141 @@ library(igraph)
 來熟悉一下 igraph 套件的操作
 ========================================================
 
-```{r}
-# graph.data.frame() 將已整理好的 krack_full_nonzero_edges 載入讓 igraph 可以讀取
-krack_full <- graph.data.frame(krack_full_nonzero_edges) 
+使用 graph.data.frame() 將已整理好的 krack_full_nonzero_edges 載入讓 igraph 可以讀取
 
-# 看一下載入的狀況 
+```{r}
+# graph.data.frame() 已預設將資料的前兩行視作端點 (Vertex)，
+# 其餘行數視作為端點之間的關係 (Edges)
+krack_full <- graph.data.frame(krack_full_nonzero_edges) 
+```
+
+```{r}
+# 看一下載入的狀況
 summary(krack_full)
 ```
 
-```{r , echo=FALSE}
-setwd('~/hackntu2016/sna/lab_1/')
-write.graph(krack_full, file='krack_full_1.txt', format="edgelist")
-```
 
 
-
+將 Graph 物件中的各個端點 (Vertex) 加上屬性
 ========================================================
 
-```{r}
-# By default, graph.data.frame() treats the first two columns of 
-# a data frame as an edge list and any remaining columns as 
-# edge attributes. Thus, the 232 edges appearing in the summary()
-# output refer to the 232 pairs of vertices that are joined by 
-# *any type* of tie. The tie types themselves are listed as edge 
-# attributes.
-  
-# To get a vector of edges for a specific type of tie, use the 
-# get.edge.attribute() function.
-get.edge.attribute(krack_full, 'advice_tie')
+使用 set.vertex.attribute()
 
-get.edge.attribute(krack_full, 'friendship_tie')
-
-get.edge.attribute(krack_full, 'reports_to_tie')
-
+```{r, echo=FALSE}
+# V(krack_full) 會回傳 graph 每一個端點的 list
+# V(krack_full)
 ```
 
-
-
-
-========================================================
-
-```{r}  
-# If you would like to symmetrize(對稱) the network, making all 
-# asymmetric ties symmetric, use the as.undirected()
-# function: 
-krack_full_symmetrized <- as.undirected(krack_full, mode='collapse')
-
-summary(krack_full_symmetrized)
+```{r, echo=FALSE}
+# 用迭代的方式設定端點的屬性 set.vertex.attribute()
+# 這種寫法會錯~
+# for (i in V(krack_full)) {
+#     for (j in names(attributes)) {
+#         krack_full <- set.vertex.attribute(krack_full, j, index = i, attributes[i + 1, j])
+#     }
+# }
 ```
-
-
-
-ADDING VERTEX (頂點) ATTRIBUTES TO A GRAPH OBJECT
-========================================================
-
-One way to add the attributes to your graph object is to iterate
-through each attribute and each vertex. This means that we will
-add one attribute at a time to each vertex in the network.
-
-V(krack_full) returns a list of the IDs of each vertex in the 
-graph. names(attributes) returns a list of the column names in
-the attributes table. The double-for loop tells R to repeat the
-code between the brackets once for each attribute and once for
-each vertex.
-
-```{r}
-for (i in V(krack_full)) {
-    for (j in names(attributes)) {
-        krack_full <- set.vertex.attribute(krack_full, 
-                                           j, 
-                                           index = i, 
-                                           attributes[i + 1, j])
-    }
-}
-```
-
-```{r}
-V(krack_full)
-```
-
-========================================================
-  
-A shorter way is to just read in attribute names when you
-create the graph object:
-  
-First create a vector of vertex labels, in this case 1:n
 
 ```{r}
 attributes = cbind(1:length(attributes[,1]), attributes)
   
-krack_full <- graph.data.frame(d = krack_full_nonzero_edges, 
-                               vertices = attributes) 
+krack_full <- graph.data.frame(d = krack_full_nonzero_edges, vertices = attributes) 
 ```
 
-
 ```{r}
-# Note that we now have 'AGE,' 'TENURE,' 'LEVEL,' and 'DEPT'
-# listed alongside 'name' as vertex attributes.
+# 再來看一下載入的狀況，此時 graph 多了 4個 'AGE' 'TENURE' 'LEVEL' 'DEPT' 屬性
 summary(krack_full)
 ```
 
 
+
+使用 igraph 套件中的函式 - get.edge.attribute()
 ========================================================
 
-```{r}  
-# We can see a list of the values for a given attribute for all of
-# the actors in the network.
-get.vertex.attribute(krack_full, 'AGE')
+igraph 套件中有一些很方便的函式可使用，如 get.edge.attribute() 與 get.vertex.attribute()
+get.edge.attribute() 可以取出 graph 中端點與端點的關聯
+
+```{r}
+# 使用 get.edge.attribute() 取出員工間上下回報的關係
+get.edge.attribute(krack_full, 'reports_to_tie')
+
+# 另一種寫法
+# get.edge.attribute(krack_full)$friendship_tie
+```
+
+
+
+使用 igraph 套件中的函式 - get.vertex.attribute()
+========================================================
+
+get.vertex.attribute() 則可以取出端點的屬性
+
+```{r}
+# 使用 get.edge.attribute() 取出員工的任期 (TENURE) 與部門 (DEPT) 屬性
 get.vertex.attribute(krack_full, 'TENURE')
-get.vertex.attribute(krack_full, 'LEVEL')
 get.vertex.attribute(krack_full, 'DEPT')
 ```
-  
 
- 
-用 plot() 將各個節點的連接關係畫出來
+
+
+學員可自行練習
 ========================================================
 
-let's visualize the network with all possible ties with plot()
+來吧，動手做才有收穫歐
+
+```{r}
+# get.edge.attribute(krack_full)
+# get.vertex.attribute(krack_full)
+```
+
+
+
+參考: 將整理好 graph 的儲存於 txt 中
+========================================================
+
+```{r}
+# 設定路徑
+# setwd('~/hackntu2016/sna/lab_1/')
+
+# 寫入
+# write.graph(krack_full, file='krack_full.txt', format="edgelist")
+```
+
+
+若是有大量的 graph 形式的數據儲存、查詢的需求，可以參考 Neo4j 這一類的 graph database
+- Neo4j: <https://neo4j.com/>
+- Neo4j client R package: <https://cran.r-project.org/web/packages/RNeo4j/RNeo4j.pdf>
+- Visualizing Your Graph with RNeo4j: <https://neo4j.com/blog/visualize-graph-with-rneo4j/>
+
+ 
+ 
+將 Graph 用視覺化的方式呈現
+========================================================
+
+用 plot() 將各個端點的連接關係畫出來
 
 ```{r}
 plot(krack_full)
 ```
 
-看起來一整個混亂，所以讓我們看看單邊類型(single edge types)的網絡。
 
 
-
-參考: 將畫好的圖儲存於 pdf 中
+來整理一下，只取出其中一種關係來觀察
 ========================================================
+
+上一張圖包含太多的關係，因此看起來一整個混亂．
+這次我們試試只取出上下回報的關係 (reports_to_tie) 來看看
 
 ```{r}
-# 設定儲存 pdf 的路徑
-# setwd("~/path/to/where_you_want_save")
+# 使用 delete.edges 與 == 0 去除無關聯的 edge，只留下有關聯的 edge
+krack_reports_to_only <- delete.edges(krack_full, E(krack_full)[get.edge.attribute(krack_full, name = "reports_to_tie") == 0])
 
-# 將圖儲存至 pdf 中
-# pdf("1.1_Krackhardt_Full.pdf")
-# plot(krack_full)
-# dev.off()
-```
-
-
-
-advice only
-========================================================
-
-處理一下
-
-```{r}
-krack_advice_only <- delete.edges(
-  krack_full, 
-  E(krack_full)[get.edge.attribute(krack_full, name = "advice_tie") == 0]
-)
-summary(krack_advice_only)
-```
-
-
-
-========================================================
-
-```{r}
-plot(krack_advice_only)
-```
-
-
-friendship only
-========================================================
-
-```{r}  
-# 
-krack_friendship_only <- delete.edges(
-  krack_full, 
-  E(krack_full)[get.edge.attribute(krack_full, name = "friendship_tie") == 0]
-)
-summary(krack_friendship_only)
-```
-
-
-friendship only
-========================================================
-
-```{r}
-plot(krack_friendship_only)
-```
-
-
-reports-to only
-========================================================
-
-```{r}
-krack_reports_to_only <- delete.edges(
-  krack_full, 
-  E(krack_full)[get.edge.attribute(krack_full, name = "reports_to_tie") == 0]
-)
 summary(krack_reports_to_only)
 ```
 
 
 
-reports-to only
+上下回報的關係圖
 ========================================================
 
 ```{r}
@@ -290,28 +266,10 @@ plot(krack_reports_to_only)
 
 
 
-
+加上一點顏色
 ========================================================
 
-Still kind of messy, so let's clean things up a bit. For 
-simplicity, we'll focus on reports_to ties for now.
-  
-First, we can optimize the layout by applying the layout 
-algorithm to the specific set of ties we care about. Here 
-we'll use Fruchterman-Rheingold; other options are 
-described in the igraph help page for "layout," which 
-can be accessed by entering ?layout.
-
-```{r} 
-reports_to_layout <- layout.fruchterman.reingold(krack_reports_to_only)
-
-plot(krack_reports_to_only, layout=reports_to_layout)
-```
-
-
-
-
-========================================================
+根據不同部門的員工加上不同的顏色，方便觀察
 
 ```{r}
 # Now let's color-code vertices by department and clean up the 
@@ -331,32 +289,33 @@ dept_vertex_colors[dept_vertex_colors == 4] = colors[5]
 ========================================================
 
 ```{r}
-plot(
-  krack_reports_to_only, 
-  layout=reports_to_layout, 
-  vertex.color=dept_vertex_colors, 
-  vertex.label=NA, 
-  edge.arrow.size=.5
-)
+plot(krack_reports_to_only, 
+     vertex.color=dept_vertex_colors, 
+     vertex.label=NA, 
+     edge.arrow.size=.5)
 ```
 
 
 
+加上各個端點的大小
 ========================================================
+
+除了顏色以外，我們也可以將端點的大小賦予意義，方便觀察
 
 ```{r}
 # Now let's set the vertex size by tenure.
 tenure_vertex_sizes = get.vertex.attribute(krack_full,"TENURE")
  
 plot(krack_reports_to_only, 
-     layout=reports_to_layout, 
      vertex.color=dept_vertex_colors, 
      vertex.label=NA, 
-     edge.arrow.size=.5,
+     edge.arrow.size=.5, 
      vertex.size=tenure_vertex_sizes)
 ```
 
 
+
+plot without layout
 ========================================================
 
 ```{r}
@@ -374,7 +333,39 @@ V(krack_full)$frame = dept_vertex_colors
 ```
 
 
-....
+plot without layout
+========================================================
+
+```{r}
+plot(krack_full, 
+     vertex.color=dept_vertex_colors, 
+     vertex.label=NA, 
+     edge.arrow.size=.5,
+     vertex.size=tenure_vertex_sizes)
+```
+
+
+
+setup layout
+========================================================
+
+Still kind of messy, so let's clean things up a bit. For 
+simplicity, we'll focus on reports_to ties for now.
+  
+First, we can optimize the layout by applying the layout 
+algorithm to the specific set of ties we care about. Here 
+we'll use Fruchterman-Rheingold; other options are 
+described in the igraph help page for "layout," which 
+can be accessed by entering ?layout.
+
+
+```{r}
+reports_to_layout <- layout.fruchterman.reingold(krack_reports_to_only)
+```
+
+
+
+plot with layout
 ========================================================
 
 ```{r}
@@ -388,28 +379,22 @@ plot(krack_full,
 
 
 
-
+參考: 將畫好的圖儲存於 pdf 中
 ========================================================
-Another option for visualizing different network ties relative 
-to one another is to overlay the edges from one tie type on the 
-structure generated by another tie type. Here we can use the
-reports-to layout but show the friendship ties:
 
 ```{r}
-plot(
-  krack_friendship_only, 
-  layout=reports_to_layout, 
-  vertex.color=dept_vertex_colors, 
-  vertex.label=NA, 
-  edge.arrow.size=.5,
-  vertex.size=tenure_vertex_sizes, 
-  main='Krackhardt High-Tech Managers'
-)
-```
-  
-  
+# 設定儲存 pdf 的路徑
+# setwd("~/path/to/where_you_want_save")
 
-將 graph 的資料輸出
+# 將圖儲存至 pdf 中
+# pdf("1.1_Krackhardt_Full.pdf")
+# plot(krack_full)
+# dev.off()
+```  
+
+
+
+參考: 將 graph 的資料以檔案的方式輸出
 ========================================================
 
   
@@ -439,20 +424,3 @@ write.graph(krack_full, file='krack_full.txt', format="edgelist")
 ```
 
 
-```{r}
-get.graph.
-```
-
-
-
-
-
-
-
-
-Slide With Plot
-========================================================
-
-```{r, echo=FALSE}
-plot(cars)
-```

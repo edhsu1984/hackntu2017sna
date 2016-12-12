@@ -26,127 +26,41 @@ Transitivity, and heterogeneity. Node and network statistics.
 ========================================================
 Lab 2 
 
-The purpose of this lab is to acquire basic cohesion 
-metrics of density, reciprocity, reach, path distance, 
-and transitivity. In addition, we'll develop triadic 
-analyses and a measure of ego-network heterogenity. 
+The purpose of this lab is to acquire basic cohesion metrics of density, reciprocity, reach, path distance, and transitivity. In addition, we'll develop triadic analyses and a measure of ego-network heterogenity. 
 
 本實驗的目的是獲得密度，互易性，到達，路徑距離和傳遞性的基本內聚度量。 此外，我們將開發三元分析和自我 - 網絡異質性的度量。
 
 
-LOAD DATA
+
+
+
+
+
+
+
+
+
+
+
+
+
+advice_tie
 ========================================================
-
-同 lab_1
-
-
-
-
-```r
-library(igraph)
-library(NetData)
-data(kracknets, package = "NetData")
-```
-
-
-
-
-========================================================
-
-同 lab_1
-
-
-```
-   ego alter advice_tie friendship_tie reports_to_tie
-2    1     2          1              1              1
-4    1     4          1              1              0
-8    1     8          1              1              0
-12   1    12          0              1              0
-16   1    16          1              1              0
-18   1    18          1              0              0
-```
-
-
-```
-IGRAPH DN-- 21 232 -- 
-+ attr: name (v/c), advice_tie (e/n), friendship_tie (e/n),
-| reports_to_tie (e/n)
-```
-
-
-
-Set vertex attributes
-========================================================
-conbine node attributes with 網路關係
-
-同 lab_1
-
-
-```r
-# Set vertex attributes
-for (i in V(krack_full)) {
-	for (j in names(attributes)) {
-		krack_full <- set.vertex.attribute(krack_full, j, index=i, attributes[i+1,j])
-	}
-}
-summary(krack_full)
-```
-
-```
-IGRAPH DN-- 21 232 -- 
-+ attr: name (v/c), AGE (v/n), TENURE (v/n), LEVEL (v/n), DEPT
-| (v/n), advice_tie (e/n), friendship_tie (e/n), reports_to_tie
-| (e/n)
-```
-
-
-
-
-========================================================
-
-同 lab_1
-
-
-```
-IGRAPH DN-- 21 190 -- 
-+ attr: name (v/c), AGE (v/n), TENURE (v/n), LEVEL (v/n), DEPT
-| (v/n), advice_tie (e/n), friendship_tie (e/n), reports_to_tie
-| (e/n)
-```
-
-![plot of chunk unnamed-chunk-6](lab_2-figure/unnamed-chunk-6-1.png)
-
-
-
-========================================================
-
-同 lab_1
-
-
-```
-IGRAPH DN-- 21 102 -- 
-+ attr: name (v/c), AGE (v/n), TENURE (v/n), LEVEL (v/n), DEPT
-| (v/n), advice_tie (e/n), friendship_tie (e/n), reports_to_tie
-| (e/n)
-```
 
 ![plot of chunk unnamed-chunk-7](lab_2-figure/unnamed-chunk-7-1.png)
 
 
-
+friendship_tie
 ========================================================
 
-同 lab_1
-
-
-```
-IGRAPH DN-- 21 20 -- 
-+ attr: name (v/c), AGE (v/n), TENURE (v/n), LEVEL (v/n), DEPT
-| (v/n), advice_tie (e/n), friendship_tie (e/n), reports_to_tie
-| (e/n)
-```
-
 ![plot of chunk unnamed-chunk-8](lab_2-figure/unnamed-chunk-8-1.png)
+
+
+
+reports_to_tie
+========================================================
+
+![plot of chunk unnamed-chunk-9](lab_2-figure/unnamed-chunk-9-1.png)
 
 
 
@@ -179,7 +93,7 @@ deg_friendship_in
 plot(krack_friendship)
 ```
 
-![plot of chunk unnamed-chunk-10](lab_2-figure/unnamed-chunk-10-1.png)
+![plot of chunk unnamed-chunk-11](lab_2-figure/unnamed-chunk-11-1.png)
 
 
 
@@ -205,7 +119,7 @@ deg_friendship_out
 plot(krack_friendship)
 ```
 
-![plot of chunk unnamed-chunk-12](lab_2-figure/unnamed-chunk-12-1.png)
+![plot of chunk unnamed-chunk-13](lab_2-figure/unnamed-chunk-13-1.png)
 
 
 
@@ -1303,27 +1217,28 @@ Question
 HETEROGENEITY (異質性?)
 ========================================================
 
-# Miller and McPherson write about processes of homophily and
-# here we take a brief look at one version of this issue. 
-# In particular, we look at the extent to which each actor's
-# "associates" (friend, advisor, boos) are heterogenous or not.
+Miller and McPherson write about processes of homophily and here we take a brief look at one version of this issue. In particular, we look at the extent to which each actor's "associates" (friend, advisor, boss) are heterogenous or not.
 
-# We'll use a statistic called the IQV, or Index of Qualitative
-# Variation. This is just an implementation of Blau's Index of
-# Heterogeneity (known to economists as the Herfindahl-Hirschman
-# index), normalized so that perfect heterogeneity (i.e., equal 
-# distribution across categories) equals 1.
+Miller和McPherson寫了關於homophily的過程，在這裡我們簡要看看這個問題的一個版本。 特別是，我們看看每個參與者的“同事”（朋友，顧問，噓）是不同的或不同的程度。
 
-# NOTE that this code only works with categorical variables that 
-# have been numerically coded to integer values that ascend
-# sequentially from 0; you may have to recode your data to get this
-# to work properly.
-# We are interested in many of the attributes of nodes.  To save 
-# time and to make our lives better we are going to create a function
-# that will provide an IQV statistic for any network and for
-# any categorical variable.  A function is a simple way to
-# create code that is both reusable and easier to edit.
 
+We'll use a statistic called the IQV, or Index of Qualitative Variation. This is just an implementation of Blau's Index of Heterogeneity (known to economists as the Herfindahl-Hirschman index), normalized so that perfect heterogeneity (i.e., equal distribution across categories) equals 1.
+
+我們將使用一個稱為IQV或定性變化索引的統計量。 這只是Blau的異質性指數（經濟學家稱為Herfindahl-Hirschman指數）的實現，其被歸一化以使得完美的異質性（即，類別之間的均勻分佈）等於1。
+
+NOTE that this code only works with categorical variables that have been numerically coded to integer values that ascend sequentially from 0; you may have to recode your data to get this to work properly.
+
+注意，此代碼僅適用於已按數字編碼為從0開始順序上升的整數值的分類變量; 您可能需要重新編碼您的數據才能正常工作。
+
+
+
+========================================================
+We are interested in many of the attributes of nodes. To save time and to make our lives better we are going to create a function that will provide an IQV statistic for any network and for any categorical variable.  A function is a simple way to create code that is both reusable and easier to edit.
+
+我們對節點的許多屬性感興趣。 為了節省時間並使我們的生活更好，我們將創建一個函數，為任何網絡和任何分類變量提供IQV統計。 函數是一種創建可重用和更易於編輯的代碼的簡單方法。
+
+
+========================================================
 # Functions have names and receive arguments.  For example,
 # anytime you call table() you are calling the table function.
 # We could write code to duplicate the table function for each
@@ -1337,6 +1252,8 @@ HETEROGENEITY (異質性?)
 
 get_iqvs <- function(graph, attribute) {
 
+
+========================================================
 #we have now defined a function, get_iqvs, that will take the
 # graph "graph" and find the iqv statistic for the categorical
 # variable "attribute." Within this function whenever we use the 
@@ -1344,7 +1261,9 @@ get_iqvs <- function(graph, attribute) {
 # variable we passed (provided) to the function
 
 mat <- get.adjacency(graph)
-				
+
+
+========================================================
 # To make this function work on a wide variety of variables we
 # find out how many coded levels (unique responses) exist for
 # the attribute variable programatically
@@ -1356,6 +1275,8 @@ mat <- get.adjacency(graph)
 	num_levels = length(unique(attr_levels))
 	iqvs = rep(0, nrow(mat))
 
+
+========================================================
 # Now that we know how many levels exist we want to loop
 # (go through) each actor in the network. Loops iterate through
 # each value in a range.  Here we are looking through each ego
@@ -1373,6 +1294,8 @@ mat <- get.adjacency(graph)
 		num_alters_this_ego = 0
 		sq_fraction_sum = 0
 
+
+========================================================
 # For each ego we want to check each tied alter for the same
 # level on the variable attribute as the ego.
 	
@@ -1410,6 +1333,8 @@ mat <- get.adjacency(graph)
 		iqvs[ego] = blau_index / (1 - (1 / num_levels))
 	}
 
+
+========================================================
 # The final part of a function returns the calculated value.
 #  So if we called get_iqvs(testgraph, gender) return would
 # provide the iqvs for gender in the test graph.  If we are also
@@ -1421,7 +1346,7 @@ mat <- get.adjacency(graph)
 }
 
 
-
+========================================================
 # For this data set, we'll look at homophily across departments, 
 # which is already coded 0-4, so no recoding is needed. 
 
