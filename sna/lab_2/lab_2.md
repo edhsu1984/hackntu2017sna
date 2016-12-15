@@ -66,7 +66,7 @@ The purpose of this lab is to acquire basic cohesion metrics of density, recipro
 滾雪球取樣 (Snowball Sampling)
 ========================================================
 
-通常在進行 Snowball Sampling 時，我們會先選定位於人際關係網路中重要的中間點，再以此去擴散抽樣的範圍．並不會無極限的一直抽樣下去，大概會限縮於三層的關係 (朋友、朋友的朋友、朋友的朋友的朋友)
+通常在進行 Snowball Sampling 時，我們會先選定位於人際關係網路中重要的點，再以此去擴散抽樣的範圍．並不會無限制的一直抽樣下去，大概會限縮於三層的關係 (朋友、朋友的朋友、朋友的朋友的朋友)
 
 影片: <https://www.youtube.com/watch?v=BIEteh4nryM>
 
@@ -75,8 +75,20 @@ The purpose of this lab is to acquire basic cohesion metrics of density, recipro
 Node-Level Statistics
 ========================================================
 
-根據前面描述，我們該如何找尋重要的中心點呢
-接下來，我們透過一些指標找尋聚焦在 friendship
+根據前面 Snowball Sampling 的描述，我們該如何找尋重要的點呢?
+
+重要的點包含四種:
+- 人際網路的明星
+- 人際網路最有效的訊息傳遞者
+- 人際網路中不同群體的樞紐
+- 人際網路中幕後決策的藏鏡人
+
+
+
+用 krack_friendship 來操作看看吧
+========================================================
+
+接下來我們聚焦在 friendship 這個網路，透過一些指標找尋這些重要的點
 
 
 
@@ -111,8 +123,6 @@ deg_friendship_in
  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 
  8 10  5  5  6  2  3  5  6  1  6  8  1  5  4  4  6  4  5  3  5 
 ```
-
-![plot of chunk unnamed-chunk-13](lab_2-figure/unnamed-chunk-13-1.png)
 
 
 
@@ -150,13 +160,12 @@ sd(deg_friendship_in)
 
 
 
-畫圖
+畫出 degree_in 的分佈 (1)
 ========================================================
-
-畫出 degree_in 的分佈
 
 
 ```r
+# 搭配使用 R 本身與 igraph 套件中的函式
 degree.distribution(krack_friendship, mode="in")
 ```
 
@@ -164,6 +173,12 @@ degree.distribution(krack_friendship, mode="in")
  [1] 0.00000000 0.09523810 0.04761905 0.09523810 0.14285714 0.28571429
  [7] 0.19047619 0.00000000 0.09523810 0.00000000 0.04761905
 ```
+
+
+
+畫出 degree_in 的分佈 (2)
+========================================================
+
 
 ```r
 plot(degree.distribution(krack_friendship, mode="in"), xlab="node degree")
@@ -190,8 +205,6 @@ deg_friendship_out
  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 
  5  3  2  6  7  6  0  1  0  7 13  4  2  2  8  2 18  1  9  2  4 
 ```
-
-![plot of chunk unnamed-chunk-17](lab_2-figure/unnamed-chunk-17-1.png)
 
 
 
@@ -229,7 +242,7 @@ sd(deg_friendship_out)
 
 
 
-畫圖
+畫出 degree_out 的分佈 (1)
 ========================================================
 
 
@@ -244,9 +257,15 @@ degree.distribution(krack_friendship, mode="out")
 [19] 0.04761905
 ```
 
+
+
+畫出 degree_out 的分佈 (2)
+========================================================
+
+
 ```r
-plot(degree.distribution(krack_friendship, mode="out"), 
-     xlab="node degree")
+plot(degree.distribution(krack_friendship, mode="out"), xlab="node degree")
+
 lines(degree.distribution(krack_friendship, mode="out"))
 ```
 
@@ -254,56 +273,27 @@ lines(degree.distribution(krack_friendship, mode="out"))
 
 
 
-中心性
+可達性 (Reachability)
 ========================================================
 
-
-```r
-# eigevector centrality
-evcent(krack_friendship)$vector
-```
-
-```
-        1         2         3         4         5         6         7 
-0.6375787 0.5938854 0.3717857 0.5761195 0.6558157 0.3939277 0.1433684 
-        8         9        10        11        12        13        14 
-0.3280714 0.3157184 0.3210385 0.8468126 0.6328913 0.1947572 0.3355875 
-       15        16        17        18        19        20        21 
-0.5910544 0.3121997 1.0000000 0.2292990 0.6952601 0.2563457 0.4752042 
-```
-
-```r
-# 依中心性排序
-order(evcent(krack_friendship)$vector, decreasing=TRUE)
-```
-
-```
- [1] 17 11 19  5  1 12  2 15  4 21  6  3 14  8 10  9 16 20 18 13  7
-```
-
-
-
-可達性 (reachability)
-========================================================
-
-任意兩個端點間可以存在不同路徑，任意兩端點間若存在一路徑，則具有可達關係 (reachable)
+任意兩個端點間可以存在不同路徑，任意兩端點間若存在一路徑，則具有可達關係 (Reachable)
 兩點若不相通，則無傳遞的路徑存在
 
-跟 degree 一樣，因連接線的方向分為兩種
-- reachability-in: 連入的可達性
-- reachability-out: 連出的可達性
+跟 Degree 一樣，因連接線的方向分為兩種
+- Reachability-In: 連入的可達性
+- Reachability-Out: 連出的可達性
 
 
 
-來思考一下 reachability 的意義
+來思考一下 Reachability 的意義 (1)
 ========================================================
 
-套用前面的 krack_friendship 觀察看看，簡單來說，就是誰認識誰，又可以透過誰去認識誰
+套用前面的 krack_friendship 觀察看看，確認端點與端點間的網路是否連通
+以人際網路來說，就是誰認識誰，又可以透過誰去認識誰
 
 
 ```r
 # 可使用 subcomponent()，確認端點與端點之間的連接性
-
 reach_friendship_in <- subcomponent(krack_friendship, 17, mode="in")
 reach_friendship_in
 ```
@@ -312,6 +302,14 @@ reach_friendship_in
 + 19/21 vertices, named:
  [1] 17 4  5  6  11 12 21 1  8  10 13 15 19 20 2  16 14 3  18
 ```
+
+
+
+來思考一下 Reachability 的意義 (2)
+========================================================
+
+由 Reachability-Out 的結果來看，由 17 號員工所輻射出去的人際網路可以涵蓋公司的所有員工
+
 
 ```r
 reach_friendship_out <- subcomponent(krack_friendship, 17, mode="out")
@@ -325,60 +323,19 @@ reach_friendship_out
 
 
 
-clusters() 強連結與弱連結
+最短路徑 (Shortest Paths) 
 ========================================================
 
-Calculate the maximal (weakly or strongly) connected components of a graph
+通常我們想了解網絡中端點之間的路徑距離，除了透過可達性 (Reachability)，確認端點與端點間是否有相連的關係外．可以進一步透過最短路徑 (Shortest Paths) 了解 端點與端點間相連的關係
 
-
-```r
-clusters(krack_friendship, mode="weak")
-```
-
-```
-$membership
- 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 
- 1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1 
-
-$csize
-[1] 21
-
-$no
-[1] 1
-```
-
-
-```r
-clusters(krack_friendship, mode="strong")
-```
-
-```
-$membership
- 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 
- 1  1  1  1  1  1  3  1  2  1  1  1  1  1  1  1  1  1  1  1  1 
-
-$csize
-[1] 19  1  1
-
-$no
-[1] 3
-```
+備註: 最短路徑 (Shortest Paths) 又稱測地線距離 (Geodesic Distance) 或簡稱距離 (Distance)，一樣都是指兩端點之間最短路徑的長度
 
 
 
-最短路徑 (shortest paths) 
+來思考一下 Shortest Paths 的意義 (1)
 ========================================================
 
-通常我們想了解網絡中端點之間的路徑距離，除了透過可達性 (reachability)，確認端點與端點間是否有相連的關係外．可以進一步透過最短路徑 (shortest paths) 了解 端點與端點間相連的關係
-
-備註: 最短路徑 (shortest paths) 又稱測地線距離 (geodesic distance) 或簡稱距離 (distance)，一樣都是指兩端點之間最短路徑的長度
-
-
-
-來思考一下 shortest paths 的意義
-========================================================
-
-套用前面的 krack_friendship 觀察看看，簡單來說 shortest paths 就是計算誰與誰差了幾層朋友的關係
+套用前面的 krack_friendship 觀察看看，簡單來說 Shortest Paths 就是計算誰與誰差了幾層朋友的關係
 
 
 ```r
@@ -414,10 +371,10 @@ sp_friendship_in
 
 
 
-來思考一下 shortest paths 的意義
+來思考一下 shortest paths 的意義 (2)
 ========================================================
 
-套用前面的 krack_friendship 觀察看看，簡單來說 shortest paths 就是計算誰與誰差了幾層朋友的關係
+套用前面的 krack_friendship 觀察看看，簡單來說 Shortest Paths 就是計算誰與誰差了幾層朋友的關係
 
 
 ```r
@@ -512,7 +469,7 @@ sd(sp_friendship_out[which(sp_friendship_out != Inf)])
 
 
 
-畫圖
+計算端點與端點間的最短路徑
 ========================================================
 
 
@@ -538,43 +495,228 @@ $nrgeo
 ```
 
 
-畫圖
-========================================================
 
-設定一下 layout
+在網路上畫出可能的最短路徑 (1)
+========================================================
 
 
 ```r
+# 設定一下 layout
 E(krack_friendship)$color <- "grey"
 for (p in sp$res) {E(krack_friendship, path=p)$color <- "red" }
 ```
 
 
 ```r
-plot(krack_friendship, 
-     layout=layout.fruchterman.reingold)
+plot(krack_friendship, layout=layout.fruchterman.reingold)
 ```
 
-![plot of chunk unnamed-chunk-29](lab_2-figure/unnamed-chunk-29-1.png)
+![plot of chunk unnamed-chunk-27](lab_2-figure/unnamed-chunk-27-1.png)
 
 
 
-畫圖
+在網路上畫出可能的最短路徑 (2)
 ========================================================
-
-有點亂，換個 layout 試試
 
 
 ```r
+# 有點亂，換個 layout 試試
 plot(krack_friendship, 
      layout=layout.reingold.tilford)
 ```
 
+![plot of chunk unnamed-chunk-28](lab_2-figure/unnamed-chunk-28-1.png)
+
+
+
+中心性 (Centrality)
+========================================================
+
+中心性可分為三種，每一種所包含的意義皆不相同
+
+- Closeness Centrality
+- Betweenness Centrality
+- Eigevector Centrality
+
+
+
+Closeness Centrality
+========================================================
+
+Closeness Centrality gives a higher score to a node that has short path distance to every other nodes
+
+Closeness Centrality 可找出人際網中最有效的訊息傳遞者 (因為該端點至該網路的其他端點最短路徑總和最小)
+
+
+```r
+closeness(krack_friendship)
+```
+
+```
+          1           2           3           4           5           6 
+0.020833333 0.020000000 0.020408163 0.028571429 0.030303030 0.028571429 
+          7           8           9          10          11          12 
+0.002380952 0.018518519 0.002380952 0.027027027 0.037037037 0.027027027 
+         13          14          15          16          17          18 
+0.023255814 0.020000000 0.030303030 0.015625000 0.045454545 0.014492754 
+         19          20          21 
+0.031250000 0.022727273 0.027027027 
+```
+
+
+
+Betweenness Centrality
+========================================================
+
+Betweenness Centrality 從網路中所有"成對"端點 (node pairs) 的最小路徑，找出座落於這些最短路徑上的點，並給予最高的分數
+
+Betweenness Centrality 主要能夠識別人際網路溝通傳遞的樞紐點，區別多個不同且未曾有關聯的社群
+
+
+
+用個範例說明一下
+========================================================
+
+下圖的 "4" 點 Betweenness Centrality 分數最高，為網路中的樞紐點，區分兩個不同的社群
+
 ![plot of chunk unnamed-chunk-30](lab_2-figure/unnamed-chunk-30-1.png)
 
 
+```r
+betweenness(bowtie_sample)
+```
 
-最小生成樹 (Minimum Spanning Tree)
+```
+ 1  2  3  4  5  6  7 
+ 0  0  0 18  0  0  0 
+```
+
+
+
+套用至 friendship 看看
+========================================================
+
+
+```r
+betweenness(krack_friendship)
+```
+
+```
+         1          2          3          4          5          6 
+ 29.066667  33.483333   1.900000  31.666667  17.416667   3.733333 
+         7          8          9         10         11         12 
+  0.000000   0.500000   0.000000   0.000000  58.450000  19.658333 
+        13         14         15         16         17         18 
+  0.000000   5.583333  22.566667   1.000000 134.433333   0.700000 
+        19         20         21 
+ 21.883333   3.041667  33.916667 
+```
+
+
+
+Eigevector Centrality
+========================================================
+
+Eigenvector Centrality 可找出網路中連結"多個重要端點"的端點
+
+Eigenvector Centrality 可找出幕後的藏鏡人 (最近最有名的例子大概就是崔順實吧，人際關係網路連結並不如朴槿惠，但在幕後卻有相當的影響力 :P)
+
+
+```r
+evcent(krack_friendship)$vector
+```
+
+```
+        1         2         3         4         5         6         7 
+0.6375787 0.5938854 0.3717857 0.5761195 0.6558157 0.3939277 0.1433684 
+        8         9        10        11        12        13        14 
+0.3280714 0.3157184 0.3210385 0.8468126 0.6328913 0.1947572 0.3355875 
+       15        16        17        18        19        20        21 
+0.5910544 0.3121997 1.0000000 0.2292990 0.6952601 0.2563457 0.4752042 
+```
+
+
+
+總結一下 (1)
+========================================================
+
+先前我們提到重要的點包含四種，我們可以用下面不同的方式找出
+- 人際網路的明星 (Degree)
+- 人際網路最有效的訊息傳遞者 (Closeness Centrality)
+- 人際網路中不同群體的樞紐 (Betweenness Centrality)
+- 人際網路中幕後決策的藏鏡人 (Eigenvector Centrality)
+
+
+
+總結一下 (2)
+========================================================
+
+friendship 這個資料集真的不太適合拿來示範，怎麼都是同一個人 (17號員工)
+
+希望各位有空可以回去試試其他的資料集
+
+
+```r
+order(deg_friendship_out, decreasing=TRUE)
+```
+
+```
+ [1] 17 11 19 15  5 10  4  6  1 12 21  2  3 13 14 16 20  8 18  7  9
+```
+
+```r
+order(closeness(krack_friendship), decreasing=TRUE)
+```
+
+```
+ [1] 17 11 19  5 15  4  6 10 12 21 13 20  1  3  2 14  8 16 18  7  9
+```
+
+```r
+order(betweenness(krack_friendship), decreasing=TRUE)
+```
+
+```
+ [1] 17 11 21  2  4  1 15 19 12  5 14  6 20  3 16 18  8  7  9 10 13
+```
+
+```r
+order(evcent(krack_friendship)$vector, decreasing=TRUE)
+```
+
+```
+ [1] 17 11 19  5  1 12  2 15  4 21  6  3 14  8 10  9 16 20 18 13  7
+```
+
+
+
+補充: Betweenness Centrality 與 Eigenvector Centrality
+========================================================
+
+從 Drew Conway 的研究中發現網路中低 Eigenvector Centrality 與高 Betweenness Centrality的端點是重要的守門人 (Gate Keepers)，如 21 號員工．
+
+而高 Eigenvector Centrality 與低 Betweenness Centrality 的端點有直接接觸重要人物，如 19 號員工．
+
+以上兩者在本資料集亦不顯著，原因為本資料網路密度相當高
+
+
+
+補充: Betweenness Centrality 與 Eigenvector Centrality
+========================================================
+
+有興趣的人可以將 Eigenvector Centrality 與 Betweenness Centrality 畫出來看看
+
+
+```r
+plot(evcent(krack_friendship)$vector, betweenness(krack_friendship))
+text(evcent(krack_friendship)$vector, betweenness(krack_friendship), 0:100, cex=0.6, pos=4)
+```
+
+![plot of chunk unnamed-chunk-35](lab_2-figure/unnamed-chunk-35-1.png)
+
+
+
+補充: 最小生成樹 (Minimum Spanning Tree)
 ========================================================
 
 最小生成樹演算法的目的是尋找 graph 中重要的連接端點，並以最小的權重總和連結整個 graph (故有多種可能性)
@@ -591,7 +733,7 @@ plot(krack_friendship,
      edge.label=E(krack_friendship)$weight)
 ```
 
-![plot of chunk unnamed-chunk-31](lab_2-figure/unnamed-chunk-31-1.png)
+![plot of chunk unnamed-chunk-36](lab_2-figure/unnamed-chunk-36-1.png)
 
 
 
@@ -627,11 +769,7 @@ plot(mst,
      edge.label=E(mst)$weight)
 ```
 
-![plot of chunk unnamed-chunk-33](lab_2-figure/unnamed-chunk-33-1.png)
-
-
-
-
+![plot of chunk unnamed-chunk-38](lab_2-figure/unnamed-chunk-38-1.png)
 
 
 
@@ -652,12 +790,81 @@ Network-Level Statistics
 
 
 
+
+
+
+強弱連結 (Strong/Weak Connection) 
+========================================================
+
+有向圖的網路連接包含兩種，強連結與弱連結
+- 強連結: 端點間必須雙向都有路可通
+
+![image](strong_connected.png)
+
+
+
+強弱連結 (Strong/Weak Connection) 
+========================================================
+
+- 弱連結: 端點間至少單向有路可通
+
+![image](weak_connected.png)
+
+
+集群 (Clustering) (1)
+========================================================
+
+透過強弱連結可將網路中所有端點做集群
+
+
+```r
+# 由於本資料中存在太多弱連結，故無法有效集群
+clusters(krack_friendship, mode="weak")
+```
+
+```
+$membership
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 
+ 1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1 
+
+$csize
+[1] 21
+
+$no
+[1] 1
+```
+
+
+
+集群 (Clustering) (2)
+========================================================
+
+
+```r
+# 使用強連結進行集群，可大致將網路中的端點分為三群
+clusters(krack_friendship, mode="strong")
+```
+
+```
+$membership
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 
+ 1  1  1  1  1  1  3  1  2  1  1  1  1  1  1  1  1  1  1  1  1 
+
+$csize
+[1] 19  1  1
+
+$no
+[1] 3
+```
+
+
+
 密度 (Density)
 ========================================================
 
 圖密度指的是實際上觀察到的 edges 的數目，除以最大可能 edges 數目的比值，若 graph 中每一個端點與其他所有端點皆相連，則此圖稱為完全圖 (complete graph)，其密度為 1
 
-graph density = (connected edges / all possible edges in graph)
+Graph Density = (Connected Edges / All Possible Edges in Graph)
 
 以社群網站的經營來講，密度可視為衡量整體用戶互動/參與度的指標
 
@@ -674,8 +881,12 @@ graph.density(krack_friendship)
 
 雙向性 (Reciprocity)
 ========================================================
-The extent to which two actors reciprocate each other's friendship or other interaction.
-到兩位演員回報對方的友誼或其他互動的程度
+
+雙向性的計算也很簡單，只不過計算的分子改為網路中雙向的 edges 的數目，分母改為網路中雙向與單向 edges 的數目
+
+Reciprocity = (Two-Way Connected Edges / All Connected Edges in Graph)
+
+也可視為衡量網路中整體用戶互動/參與度的指標
 
 
 ```r
@@ -688,10 +899,15 @@ reciprocity(krack_friendship)
 
 
 
+
+
+
+
+
 傳遞性 (Transitivity)
 ========================================================
 
-傳遞性transitivity: 實際上具傳遞性的三人組比上所有可能的具有傳遞性的三人組
+傳遞性Transitivity: 實際上具傳遞性的三人組比上所有可能的具有傳遞性的三人組
 
 
 ```r
