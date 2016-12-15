@@ -42,7 +42,7 @@ SETUP
 # context. "animation" is used, not surprisingly, to produce
 # animations.
 
-install.packages("animation", repos = "http://cran.cnr.berkeley.edu/", dependencies = TRUE)
+# install.packages("animation", repos = "http://cran.cnr.berkeley.edu/", dependencies = TRUE)
 library('igraph')
 library('cluster')
 library('animation')
@@ -137,6 +137,8 @@ COMMUNITY DETECTION
 # that the number of edges decreases as reciprocated directed ties
 # are consolidated into single undirected ties, and the number of
 # vertices decreases as isolates are removed.
+
+```{r}
 m182_friend_und <- as.undirected(m182_friend, mode='collapse')
 m182_friend_no_iso <- delete.vertices(m182_friend_und, V(m182_friend_und)[degree(m182_friend_und)==0])
 summary(m182_friend)
@@ -147,7 +149,7 @@ summary(m182_friend_no_iso)
 # edge-betweenness. As you use them, consider how they portray 
 # clusters and consider which one(s) afford a sensible view of 
 # the social world as cohesively organized. 
-
+```
 
 ###
 # 3A. COMMUNITY DETECTION: WALKTRAP
