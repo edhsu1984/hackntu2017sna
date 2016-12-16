@@ -621,17 +621,7 @@ Network-Level Statistics
 
 有向圖的網路連接包含兩種，強連結與弱連結
 - 強連結: 端點間必須雙向都有路可通
-
-![image](strong_connected.png)
-
-
-
-強弱連結 (Strong/Weak Connection) 
-========================================================
-
 - 弱連結: 端點間至少單向有路可通
-
-![image](weak_connected.png)
 
 
 

@@ -336,8 +336,6 @@ get.vertex.attribute(krack_full, 'DEPT')
 學員可自行練習
 ========================================================
 
-來吧，動手做才有收穫歐
-
 
 ```r
 # get.edge.attribute(krack_full)
@@ -565,7 +563,6 @@ plot(krack_full,
 參考: 將 graph 的資料以檔案的方式輸出
 ========================================================
 
-  
 The write.graph() function exports a graph object in various
 formats readable by other programs. There is no explicit
 option for a UCINET data type, but you can export the graph
@@ -582,6 +579,7 @@ write.graph(krack_full, file='krack_full.dl', format="pajek")
 
 
 
+參考: 將 graph 的資料以檔案的方式輸出
 ========================================================
 
 For a more general file type (e.g., importable to Excel),
