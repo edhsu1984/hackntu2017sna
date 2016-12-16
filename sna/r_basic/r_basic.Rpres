@@ -1,12 +1,12 @@
-r_basic
+Social Network Analysis 101 (0)
 ========================================================
-author: 
-date: 
+author: 許晉源 (Ed Hsu)
+date: 2016.12.17 
 autosize: true
 
 
 
-重點
+本次 workshop 重點
 ========================================================
 
 - 讀取資料
@@ -37,7 +37,7 @@ reports_to_data_frame <- read.table('https://goo.gl/W1YP8P')
 ========================================================
 
 ```{r}
-# 確認資料的型態
+# 確認資料的型態及class
 typeof(advice_data_frame)
 class(advice_data_frame)
 ```

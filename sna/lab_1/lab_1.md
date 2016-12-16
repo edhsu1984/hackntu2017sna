@@ -1,15 +1,15 @@
-Lab 1
+Social Network Analysis 101 (1)
 ========================================================
-author: 
-date: 
+author: 許晉源 (Ed Hsu)
+date: 2016.12.17 
 autosize: true
 
 
 
-First Slide
+本次 Workshop 重點
 ========================================================
 
-涵蓋一些基本的 R 指令，加載和管理數據、圖形可視化及匯出數據以供其他地方使用。
+涵蓋一些基本的 R 指令，載入和管理數據、圖形可視化及匯出數據以供其他地方使用。
 
 本次教學會運用到的 R 套件為：
 - igraph
@@ -17,14 +17,23 @@ First Slide
 
 
 
+What is social network analysis ?
+========================================================
+
+![image](youtube.png)
+
+<https://youtu.be/Qj2uWpYsdcM>
+
+
+
 先來說說 Kracknets 數據集
 ========================================================
 
-Kracknets 這個數據集主要是描述 Silicon Systems 這間高科技公司內員工之間的關係，當初是為了要研究哪一種人際網路會影響團體內部的輿論形成，主要包含下面這三種關係．
-- attribute (員工屬性)
-- advice_tie (員工間友誼的關係)
-- friendship_tie (員工間尋求建議的關係)
-- reports_to_tie (員工間上下回報的關係)
+Kracknets 這個數據集主要是描述 Silicon Systems 這間高科技公司內員工之間的關係，當初是為了要研究哪一種人際網路會影響團體內部的輿論形成，主要包含下面這三種關係
+- Attribute (員工屬性)
+- Advice_tie (員工間尋求建議的關係)
+- Friendship_tie (員工間友誼的關係)
+- Reports_to_tie (員工間上下回報的關係)
 
 說明文件: <https://cran.r-project.org/web/packages/NetData/NetData.pdf>
 
@@ -66,6 +75,16 @@ head(attributes)
 ```
 
 ```r
+# tail(attributes)
+```
+
+
+
+來看看資料長什麼樣子吧 - 員工屬性
+========================================================
+
+
+```r
 summary(attributes)
 ```
 
@@ -78,6 +97,13 @@ summary(attributes)
  3rd Qu.:43.00   3rd Qu.:12.500   3rd Qu.:3.000   3rd Qu.:3.00  
  Max.   :62.00   Max.   :30.000   Max.   :3.000   Max.   :4.00  
 ```
+
+
+
+來看看資料長什麼樣子吧 - 員工之間的關係
+========================================================
+
+![plot of chunk unnamed-chunk-4](lab_1-figure/unnamed-chunk-4-1.png)
 
 
 
@@ -98,8 +124,6 @@ head(krack_full_data_frame)
 5   1     5          0              0              0
 6   1     6          0              0              0
 ```
-
-![plot of chunk unnamed-chunk-4](lab_1-figure/unnamed-chunk-4-1.png)
 
 
 
@@ -127,13 +151,55 @@ head(krack_full_nonzero_edges)
 
 
 
+一點簡單的資料整理
+========================================================
+
+處理前
+
+
+```r
+str(krack_full_data_frame)
+```
+
+```
+'data.frame':	441 obs. of  5 variables:
+ $ ego           : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ alter         : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ advice_tie    : int  0 1 0 1 0 0 0 1 0 0 ...
+ $ friendship_tie: int  0 1 0 1 0 0 0 1 0 0 ...
+ $ reports_to_tie: int  0 1 0 0 0 0 0 0 0 0 ...
+```
+
+
+
+一點簡單的資料整理
+========================================================
+
+處理後
+
+
+```r
+str(krack_full_nonzero_edges)
+```
+
+```
+'data.frame':	232 obs. of  5 variables:
+ $ ego           : int  1 1 1 1 1 1 1 2 2 2 ...
+ $ alter         : int  2 4 8 12 16 18 21 1 6 7 ...
+ $ advice_tie    : int  1 1 1 0 1 1 1 0 1 1 ...
+ $ friendship_tie: int  1 1 1 1 1 0 0 1 0 0 ...
+ $ reports_to_tie: int  1 0 0 0 0 0 0 0 0 1 ...
+```
+
+
+
 igraph 套件
 ========================================================
 
 igraph 套件很適合用來分析 graph 與 network 類型的數據，內建函式包含三個方向
-- graph generating
-- visualization
-- analysis method
+- Graph generating
+- Visualization
+- Analysis method
 
 說明文件: <http://cran.r-project.org/web/packages/igraph/igraph.pdf>
 
@@ -144,12 +210,6 @@ igraph 套件很適合用來分析 graph 與 network 類型的數據，內建函
 
 
 ```r
-# 載入 igraph 套件
-library(igraph) 
-```
-
-
-```r
 # 安裝套件 (目前環境已安裝)
 # install.packages("igraph")
 ```
@@ -157,7 +217,7 @@ library(igraph)
 
 ```r
 # 載入 igraph 套件
-library(igraph)
+library(igraph) 
 ```
 
 
@@ -192,8 +252,6 @@ IGRAPH DN-- 21 232 --
 ========================================================
 
 使用 set.vertex.attribute()
-
-
 
 
 
@@ -255,7 +313,7 @@ get.vertex.attribute() 則可以取出端點的屬性
 
 
 ```r
-# 使用 get.edge.attribute() 取出員工的任期 (TENURE) 與部門 (DEPT) 屬性
+# 使用 get.vertex.attribute() 取出員工的任期 (TENURE) 與部門 (DEPT) 屬性
 get.vertex.attribute(krack_full, 'TENURE')
 ```
 
@@ -318,7 +376,7 @@ get.vertex.attribute(krack_full, 'DEPT')
 plot(krack_full)
 ```
 
-![plot of chunk unnamed-chunk-19](lab_1-figure/unnamed-chunk-19-1.png)
+![plot of chunk unnamed-chunk-20](lab_1-figure/unnamed-chunk-20-1.png)
 
 
 
@@ -348,12 +406,14 @@ IGRAPH DN-- 21 20 --
 上下回報的關係圖
 ========================================================
 
+7 號在公司內部可能是老闆的角色
+
 
 ```r
 plot(krack_reports_to_only)
 ```
 
-![plot of chunk unnamed-chunk-21](lab_1-figure/unnamed-chunk-21-1.png)
+![plot of chunk unnamed-chunk-22](lab_1-figure/unnamed-chunk-22-1.png)
 
 
 
@@ -388,7 +448,7 @@ plot(krack_reports_to_only,
      edge.arrow.size=.5)
 ```
 
-![plot of chunk unnamed-chunk-23](lab_1-figure/unnamed-chunk-23-1.png)
+![plot of chunk unnamed-chunk-24](lab_1-figure/unnamed-chunk-24-1.png)
 
 
 
@@ -409,11 +469,11 @@ plot(krack_reports_to_only,
      vertex.size=tenure_vertex_sizes)
 ```
 
-![plot of chunk unnamed-chunk-24](lab_1-figure/unnamed-chunk-24-1.png)
+![plot of chunk unnamed-chunk-25](lab_1-figure/unnamed-chunk-25-1.png)
 
 
 
-plot without layout
+Plot without layout
 ========================================================
 
 
@@ -432,6 +492,7 @@ V(krack_full)$frame = dept_vertex_colors
 ```
 
 
+
 plot without layout
 ========================================================
 
@@ -444,7 +505,7 @@ plot(krack_full,
      vertex.size=tenure_vertex_sizes)
 ```
 
-![plot of chunk unnamed-chunk-26](lab_1-figure/unnamed-chunk-26-1.png)
+![plot of chunk unnamed-chunk-27](lab_1-figure/unnamed-chunk-27-1.png)
 
 
 
@@ -481,7 +542,7 @@ plot(krack_full,
      vertex.size=tenure_vertex_sizes)
 ```
 
-![plot of chunk unnamed-chunk-28](lab_1-figure/unnamed-chunk-28-1.png)
+![plot of chunk unnamed-chunk-29](lab_1-figure/unnamed-chunk-29-1.png)
 
 
 

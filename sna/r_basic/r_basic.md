@@ -1,19 +1,17 @@
-r_basic
+Social Network Analysis 101 (0)
 ========================================================
-author: 
-date: 
+author: 許晉源 (Ed Hsu)
+date: 2016.12.17 
 autosize: true
 
 
 
-First Slide
+本次 workshop 重點
 ========================================================
 
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
-
 - 讀取資料
-- Bullet 2
-- Bullet 3
+- 整理資料 (標記、合併表格)
+- 利用 head()、tail()、summary() 做簡單的資料觀察
 
 
 
@@ -41,7 +39,7 @@ reports_to_data_frame <- read.table('https://goo.gl/W1YP8P')
 
 
 ```r
-# 確認資料的型態
+# 確認資料的型態及class
 typeof(advice_data_frame)
 ```
 
@@ -102,10 +100,10 @@ head(attributes)
 
 
 
-針對連續的資料集可以用 summary() 
+summary() 很快地看出資料的分佈狀況
 ========================================================
 
-針對連續的資料型態，可以用 summary() 可以很快地看出資料的分佈狀況
+可以用 summary() 很快地看出資料的分佈狀況
 
 
 ```r

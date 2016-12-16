@@ -1,7 +1,7 @@
-Lab 2
+Social Network Analysis 101 (2)
 ========================================================
-author: 
-date: 
+author: 許晉源 (Ed Hsu)
+date: 2016.12.17 
 autosize: true
 
 First Slide
@@ -131,7 +131,7 @@ plot(krack_friendship)
 
 
 
-度數 (degree)
+度數 (Degree)
 ========================================================
 
 度數 (degree) 指的是某端點 (vertex) 與其他端點的連接線的數目，其中又因連接線的方向分為兩種
@@ -260,6 +260,7 @@ lines(degree.distribution(krack_friendship, mode="out"))
 
 ```{r}
 # 可使用 subcomponent()，確認端點與端點之間的連接性
+# 這 19 個員工與 17 號員工有直接跟間接地認識關係
 reach_friendship_in <- subcomponent(krack_friendship, 17, mode="in")
 reach_friendship_in
 ```
@@ -306,6 +307,7 @@ sp_friendship_in
 套用前面的 krack_friendship 觀察看看，簡單來說 Shortest Paths 就是計算誰與誰差了幾層朋友的關係
 
 ```{r}
+# Inf 表示沒有聯通的最短路徑，可以對照 deg_friendship_out
 sp_friendship_out <- shortest.paths(krack_friendship, mode='out')
 sp_friendship_out
 ```
@@ -323,13 +325,19 @@ mean(sp_friendship_out[which(sp_friendship_out != Inf)])
 sd(sp_friendship_out[which(sp_friendship_out != Inf)])
 ```
 
-
-
-計算端點與端點間的最短路徑
 ========================================================
 
 ```{r}
-# shortest paths 1 to 13
+shortest.paths(krack_friendship)
+```
+
+
+
+計算端點與端點間所有的最短路徑
+========================================================
+
+```{r}
+# shortest paths from node 1 to node 13
 sp <- get.all.shortest.paths(krack_friendship, 1, 13)
 sp
 ```
@@ -407,6 +415,13 @@ bowtie_sample <- graph.data.frame(bowtie)
 plot(bowtie_sample, layout=layout.fruchterman.reingold)
 ```
 
+
+
+用個範例說明一下
+========================================================
+
+下圖的 "4" 點 Betweenness Centrality 分數最高，為網路中的樞紐點，區分兩個不同的社群
+
 ```{r}
 betweenness(bowtie_sample)
 ```
@@ -428,6 +443,36 @@ Eigevector Centrality
 Eigenvector Centrality 可找出網路中連結"多個重要端點"的端點
 
 Eigenvector Centrality 可找出幕後的藏鏡人 (最近最有名的例子大概就是崔順實吧，人際關係網路連結並不如朴槿惠，但在幕後卻有相當的影響力 :P)
+
+
+
+用個範例說明一下
+========================================================
+
+下圖的 "4" 點 Eigenvector Centrality 分數最高，該點剛好連接了其它最重要的點 (1、5、7)
+
+```{r, echo=FALSE}
+setwd('~/hackntu2016/sna/lab_2/')
+eigen_network <- read.table('eigen_network.txt')
+eigen_network_sample <- graph.data.frame(eigen_network)
+plot(eigen_network_sample, layout=layout.fruchterman.reingold)
+```
+
+
+
+用個範例說明一下
+========================================================
+
+下圖的 "4" 點 Eigenvector Centrality 分數最高，該點剛好連接了其它最重要的點 (1、5、7)
+
+```{r}
+evcent(eigen_network_sample)$vector
+```
+
+
+
+套用至 friendship 看看
+========================================================
 
 ```{r}
 evcent(krack_friendship)$vector

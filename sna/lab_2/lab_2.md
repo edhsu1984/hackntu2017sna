@@ -1,7 +1,7 @@
-Lab 2
+Social Network Analysis 101 (2)
 ========================================================
-author: 
-date: 
+author: 許晉源 (Ed Hsu)
+date: 2016.12.17 
 autosize: true
 
 First Slide
@@ -96,7 +96,7 @@ Node-Level Statistics
 
 
 
-度數 (degree)
+度數 (Degree)
 ========================================================
 
 度數 (degree) 指的是某端點 (vertex) 與其他端點的連接線的數目，其中又因連接線的方向分為兩種
@@ -294,6 +294,7 @@ lines(degree.distribution(krack_friendship, mode="out"))
 
 ```r
 # 可使用 subcomponent()，確認端點與端點之間的連接性
+# 這 19 個員工與 17 號員工有直接跟間接地認識關係
 reach_friendship_in <- subcomponent(krack_friendship, 17, mode="in")
 reach_friendship_in
 ```
@@ -378,6 +379,7 @@ sp_friendship_in
 
 
 ```r
+# Inf 表示沒有聯通的最短路徑，可以對照 deg_friendship_out
 sp_friendship_out <- shortest.paths(krack_friendship, mode='out')
 sp_friendship_out
 ```
@@ -467,14 +469,46 @@ sd(sp_friendship_out[which(sp_friendship_out != Inf)])
 [1] 0.9911831
 ```
 
-
-
-計算端點與端點間的最短路徑
 ========================================================
 
 
 ```r
-# shortest paths 1 to 13
+shortest.paths(krack_friendship)
+```
+
+```
+   1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21
+1  0 1 2 1 2 2 2 1 2  2  1  1  2  2  1  1  1  2  1  2  2
+2  1 0 2 1 1 1 2 2 2  2  1  2  2  2  2  1  1  1  1  2  1
+3  2 2 0 2 2 2 2 2 2  1  1  2  2  1  1  2  1  2  1  2  2
+4  1 1 2 0 2 2 2 1 2  2  1  1  2  2  2  1  1  2  2  2  2
+5  2 1 2 2 0 2 2 2 1  1  1  2  1  1  1  2  1  2  1  2  1
+6  2 1 2 2 2 0 1 2 1  2  2  1  3  2  1  2  1  2  2  2  1
+7  2 2 2 2 2 1 0 2 2  2  2  2  3  1  2  2  1  3  2  2  2
+8  1 2 2 1 2 2 2 0 2  1  1  2  2  2  2  2  1  2  2  2  2
+9  2 2 2 2 1 1 2 2 0  1  1  2  2  2  1  2  1  2  2  2  2
+10 2 2 1 2 1 2 2 1 1  0  2  1  2  2  2  1  1  2  2  1  2
+11 1 1 1 1 1 2 2 1 1  2  0  1  1  2  1  2  1  1  1  1  2
+12 1 2 2 1 2 1 2 2 2  1  1  0  2  2  2  2  1  2  1  2  1
+13 2 2 2 2 1 3 3 2 2  2  1  2  0  2  2  3  2  2  2  2  2
+14 2 2 1 2 1 2 1 2 2  2  2  2  2  0  1  2  1  3  1  2  2
+15 1 2 1 2 1 1 2 2 1  2  1  2  2  1  0  2  1  2  1  2  2
+16 1 1 2 1 2 2 2 2 2  1  2  2  3  2  2  0  1  2  2  2  2
+17 1 1 1 1 1 1 1 1 1  1  1  1  2  1  1  1  0  2  1  1  1
+18 2 1 2 2 2 2 3 2 2  2  1  2  2  3  2  2  2  0  2  1  1
+19 1 1 1 2 1 2 2 2 2  2  1  1  2  1  1  2  1  2  0  1  2
+20 2 2 2 2 2 2 2 2 2  1  1  2  2  2  2  2  1  1  1  0  2
+21 2 1 2 2 1 1 2 2 2  2  2  1  2  2  2  2  1  1  2  2  0
+```
+
+
+
+計算端點與端點間所有的最短路徑
+========================================================
+
+
+```r
+# shortest paths from node 1 to node 13
 sp <- get.all.shortest.paths(krack_friendship, 1, 13)
 sp
 ```
@@ -511,7 +545,7 @@ for (p in sp$res) {E(krack_friendship, path=p)$color <- "red" }
 plot(krack_friendship, layout=layout.fruchterman.reingold)
 ```
 
-![plot of chunk unnamed-chunk-27](lab_2-figure/unnamed-chunk-27-1.png)
+![plot of chunk unnamed-chunk-28](lab_2-figure/unnamed-chunk-28-1.png)
 
 
 
@@ -525,7 +559,7 @@ plot(krack_friendship,
      layout=layout.reingold.tilford)
 ```
 
-![plot of chunk unnamed-chunk-28](lab_2-figure/unnamed-chunk-28-1.png)
+![plot of chunk unnamed-chunk-29](lab_2-figure/unnamed-chunk-29-1.png)
 
 
 
@@ -579,7 +613,14 @@ Betweenness Centrality 主要能夠識別人際網路溝通傳遞的樞紐點，
 
 下圖的 "4" 點 Betweenness Centrality 分數最高，為網路中的樞紐點，區分兩個不同的社群
 
-![plot of chunk unnamed-chunk-30](lab_2-figure/unnamed-chunk-30-1.png)
+![plot of chunk unnamed-chunk-31](lab_2-figure/unnamed-chunk-31-1.png)
+
+
+
+用個範例說明一下
+========================================================
+
+下圖的 "4" 點 Betweenness Centrality 分數最高，為網路中的樞紐點，區分兩個不同的社群
 
 
 ```r
@@ -620,6 +661,39 @@ Eigevector Centrality
 Eigenvector Centrality 可找出網路中連結"多個重要端點"的端點
 
 Eigenvector Centrality 可找出幕後的藏鏡人 (最近最有名的例子大概就是崔順實吧，人際關係網路連結並不如朴槿惠，但在幕後卻有相當的影響力 :P)
+
+
+
+用個範例說明一下
+========================================================
+
+下圖的 "4" 點 Eigenvector Centrality 分數最高，該點剛好連接了其它最重要的點 (1、5、7)
+
+![plot of chunk unnamed-chunk-34](lab_2-figure/unnamed-chunk-34-1.png)
+
+
+
+用個範例說明一下
+========================================================
+
+下圖的 "4" 點 Eigenvector Centrality 分數最高，該點剛好連接了其它最重要的點 (1、5、7)
+
+
+```r
+evcent(eigen_network_sample)$vector
+```
+
+```
+        1         2         3         4         5         6         7 
+0.8702639 0.4142136 0.4142136 1.0000000 0.6153695 0.2928932 0.6153695 
+        8 
+0.2928932 
+```
+
+
+
+套用至 friendship 看看
+========================================================
 
 
 ```r
@@ -712,7 +786,7 @@ plot(evcent(krack_friendship)$vector, betweenness(krack_friendship))
 text(evcent(krack_friendship)$vector, betweenness(krack_friendship), 0:100, cex=0.6, pos=4)
 ```
 
-![plot of chunk unnamed-chunk-35](lab_2-figure/unnamed-chunk-35-1.png)
+![plot of chunk unnamed-chunk-38](lab_2-figure/unnamed-chunk-38-1.png)
 
 
 
@@ -733,7 +807,7 @@ plot(krack_friendship,
      edge.label=E(krack_friendship)$weight)
 ```
 
-![plot of chunk unnamed-chunk-36](lab_2-figure/unnamed-chunk-36-1.png)
+![plot of chunk unnamed-chunk-39](lab_2-figure/unnamed-chunk-39-1.png)
 
 
 
@@ -769,7 +843,7 @@ plot(mst,
      edge.label=E(mst)$weight)
 ```
 
-![plot of chunk unnamed-chunk-38](lab_2-figure/unnamed-chunk-38-1.png)
+![plot of chunk unnamed-chunk-41](lab_2-figure/unnamed-chunk-41-1.png)
 
 
 
