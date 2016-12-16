@@ -4,31 +4,16 @@ author: 許晉源 (Ed Hsu)
 date: 2016.12.17 
 autosize: true
 
-First Slide
+
+
+本次 Workshop 重點
 ========================================================
 
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
-
-- Bullet 1
-- Bullet 2
-- Bullet 3
+- Data Collection
+- Node-Level Statistics
+- Network-Level Statistics
 
 
-
-
-========================================================
-
-LAB 2: Methodological beginnings - Density, Reciprocity, Triads, 
-Transitivity, and heterogeneity. Node and network statistics.
-
-
-
-========================================================
-Lab 2 
-
-The purpose of this lab is to acquire basic cohesion metrics of density, reciprocity, reach, path distance, and transitivity. In addition, we'll develop triadic analyses and a measure of ego-network heterogenity. 
-
-本實驗的目的是獲得密度，互易性，到達，路徑距離和傳遞性的基本內聚度量。 此外，我們將開發三元分析和自我 - 網絡異質性的度量。
 
 
 
@@ -70,6 +55,16 @@ The purpose of this lab is to acquire basic cohesion metrics of density, recipro
 
 影片: <https://www.youtube.com/watch?v=BIEteh4nryM>
 
+
+
+常見的資料來源
+========================================================
+
+- 問卷
+- Blog
+- 企業內部資料 (名單、紀錄、Email、Log 等)
+- 政府公開資料
+- 社交社群網站 (FaceBook、Twitter)
 
 
 Node-Level Statistics
@@ -160,7 +155,7 @@ sd(deg_friendship_in)
 
 
 
-畫出 degree_in 的分佈 (1)
+畫出 in-degree 的分佈 (1)
 ========================================================
 
 
@@ -176,7 +171,7 @@ degree.distribution(krack_friendship, mode="in")
 
 
 
-畫出 degree_in 的分佈 (2)
+畫出 in-degree 的分佈 (2)
 ========================================================
 
 
@@ -242,7 +237,7 @@ sd(deg_friendship_out)
 
 
 
-畫出 degree_out 的分佈 (1)
+畫出 out-degree 的分佈 (1)
 ========================================================
 
 
@@ -259,7 +254,7 @@ degree.distribution(krack_friendship, mode="out")
 
 
 
-畫出 degree_out 的分佈 (2)
+畫出 out-degree 的分佈 (2)
 ========================================================
 
 
@@ -469,6 +464,9 @@ sd(sp_friendship_out[which(sp_friendship_out != Inf)])
 [1] 0.9911831
 ```
 
+
+
+最短路徑 (Shortest Paths) 
 ========================================================
 
 
@@ -580,6 +578,11 @@ Closeness Centrality
 Closeness Centrality gives a higher score to a node that has short path distance to every other nodes
 
 Closeness Centrality 可找出人際網中最有效的訊息傳遞者 (因為該端點至該網路的其他端點最短路徑總和最小)
+
+
+
+Closeness Centrality
+========================================================
 
 
 ```r
@@ -725,10 +728,6 @@ evcent(krack_friendship)$vector
 總結一下 (2)
 ========================================================
 
-friendship 這個資料集真的不太適合拿來示範，怎麼都是同一個人 (17號員工)
-
-希望各位有空可以回去試試其他的資料集
-
 
 ```r
 order(deg_friendship_out, decreasing=TRUE)
@@ -745,6 +744,16 @@ order(closeness(krack_friendship), decreasing=TRUE)
 ```
  [1] 17 11 19  5 15  4  6 10 12 21 13 20  1  3  2 14  8 16 18  7  9
 ```
+
+
+
+總結一下 (3)
+========================================================
+
+friendship 這個資料集真的不太適合拿來示範，怎麼都是同一個人 (17號員工)
+
+各位有空可以回去試試其他的資料集
+
 
 ```r
 order(betweenness(krack_friendship), decreasing=TRUE)
@@ -780,13 +789,7 @@ order(evcent(krack_friendship)$vector, decreasing=TRUE)
 
 有興趣的人可以將 Eigenvector Centrality 與 Betweenness Centrality 畫出來看看
 
-
-```r
-plot(evcent(krack_friendship)$vector, betweenness(krack_friendship))
-text(evcent(krack_friendship)$vector, betweenness(krack_friendship), 0:100, cex=0.6, pos=4)
-```
-
-![plot of chunk unnamed-chunk-38](lab_2-figure/unnamed-chunk-38-1.png)
+![plot of chunk unnamed-chunk-39](lab_2-figure/unnamed-chunk-39-1.png)
 
 
 
@@ -801,13 +804,23 @@ text(evcent(krack_friendship)$vector, betweenness(krack_friendship), 0:100, cex=
 
 # 設定每個 edges 的權重
 E(krack_friendship)$weight <- 1
+```
 
+
+
+
+
+補充: 最小生成樹 (Minimum Spanning Tree)
+========================================================
+
+
+```r
 plot(krack_friendship, 
      layout=layout.fruchterman.reingold, 
      edge.label=E(krack_friendship)$weight)
 ```
 
-![plot of chunk unnamed-chunk-39](lab_2-figure/unnamed-chunk-39-1.png)
+![plot of chunk unnamed-chunk-42](lab_2-figure/unnamed-chunk-42-1.png)
 
 
 
@@ -839,27 +852,27 @@ IGRAPH DNW- 21 20 --
 
 ```r
 plot(mst, 
-     layout=layout.reingold.tilford, 
+     #layout=layout.reingold.tilford, 
+     layout=layout.fruchterman.reingold, 
      edge.label=E(mst)$weight)
 ```
 
-![plot of chunk unnamed-chunk-41](lab_2-figure/unnamed-chunk-41-1.png)
+![plot of chunk unnamed-chunk-45](lab_2-figure/unnamed-chunk-45-1.png)
 
 
 
 Question
 ========================================================
 
-- What do these statistics tell us about each network and its individuals in general? 
+- 各位可以回家後繼續拿本資料集的其他網路來分析看看
 - in-degree 或 out-degree 最高的人 (端點)，都在群體中扮演樞紐的角色，各位練習完可以思考對於這兩種人的行銷方針
-- 對稱性
 
 
 
 Network-Level Statistics
 ========================================================
 
-
+在上完上面的 Node-Level Statistics 的內容後，接下來我們來看看 Network-Level Statistics
 
 
 
@@ -883,6 +896,7 @@ Network-Level Statistics
 - 弱連結: 端點間至少單向有路可通
 
 ![image](weak_connected.png)
+
 
 
 集群 (Clustering) (1)
@@ -973,290 +987,12 @@ reciprocity(krack_friendship)
 
 
 
-
-
-
-
-
-傳遞性 (Transitivity)
+參考資料
 ========================================================
 
-傳遞性Transitivity: 實際上具傳遞性的三人組比上所有可能的具有傳遞性的三人組
+- Stanford University Social Network Analysis Labs in R and SoNIA - McFarland, Daniel A., Solomon Messing, Michael Nowak and Sean J. Westwood. (<http://sna.stanford.edu/rlabs.php>)
 
+- Social Network Analysis for Startups - Maksim Tsvetovat, Alexander Kouznetsov (<http://shop.oreilly.com/product/0636920020424.do>)
 
-```r
-transitivity(krack_friendship, type="global")
-```
-
-```
-[1] 0.4714946
-```
-
-
-
-========================================================
-
-
-```r
-# Triad census. Here we'll first build a vector of labels for 
-# the different triad types. Then we'll combine this vector
-# with the triad censuses for the different networks, which 
-# we'll .
-
-census_labels = c('003',
-                  '012',
-                  '102',
-                  '021D',
-                  '021U',
-                  '021C',
-                  '111D',
-                  '111U',
-                  '030T',
-                  '030C',
-                  '201',
-                  '120D',
-                  '120U',
-                  '120C',
-                  '210',
-                  '300')
-
-tc_full <- triad.census(krack_full)
-tc_advice <- triad.census(krack_advice)
-tc_friendship <- triad.census(krack_friendship)
-tc_reports_to <- triad.census(krack_reports_to)
-
-triad_df <- data.frame(census_labels,
-                       tc_full, 
-                       tc_advice, 
-                       tc_friendship,
-                       tc_reports_to)
-```
-
-
-========================================================
-
-
-```r
-triad_df
-```
-
-```
-   census_labels tc_full tc_advice tc_friendship tc_reports_to
-1            003      29        74           376          1003
-2            012      99       153           366           274
-3            102      93        90           143             0
-4           021D      90       160           114             0
-5           021U      57        86            34            37
-6           021C      28        49            35            16
-7           111D      72        59            39             0
-8           111U     130       101           101             0
-9           030T     121       190            23             0
-10          030C       0         2             0             0
-11           201     121        72            20             0
-12          120D      77        62            16             0
-13          120U      98        78            25             0
-14          120C      31        17             9             0
-15           210     208       107            23             0
-16           300      76        30             6             0
-```
-
-
-
-========================================================
-export as a CSV
-
-```r
-# To export any of these vectors to a CSV for use in another program, simply
-# use the write.csv() command:
-write.csv(triad_df, 'krack_triads.csv')
-```
-
-
-
-Question
-========================================================
-
-- How do the three networks differ on network statictics? 
-- What does the triad census tell us? Can you calculate the likelihood of any triad's occurrence? 
-- See the back of Wasserman and Faust and its section on triads. Calculate the degree of clustering and hierarchy in Excel. 
-- What do we learn from that?
-
-
-
-
-異質性 (Heterogeneity)
-========================================================
-
-異質性Heterogeneity: 人口在名目參數上的分佈情形
-- 兩個隨機選取的人分屬於不同團體的機率
-- 社會的團體愈多，每一個團體的人數愈平均，社會的異質程度越高
-- 可以Blau index或entropy index 來衡量
-
-
-
-========================================================
-
-In particular, we look at the extent to which each actor's "associates" (friend, advisor, boss) are heterogenous or not.
-
-特別是，我們看看每個參與者的"同事"（朋友，顧問，噓）是不同的或不同的程度。
-
-
-We'll use a statistic called the IQV, or Index of Qualitative Variation. 
-This is just an implementation of Blau's Index of Heterogeneity (known to economists as the Herfindahl-Hirschman index), normalized so that perfect heterogeneity (i.e., equal distribution across categories) equals 1.
-
-我們將使用一個稱為IQV或定性變化索引的統計量。 這只是Blau的異質性指數（經濟學家稱為Herfindahl-Hirschman指數）的實現，其被歸一化以使得完美的異質性（即，類別之間的均勻分佈）等於1。
-
-
-
-========================================================
-We are interested in many of the attributes of nodes. To save time and to make our lives better we are going to create a function that will provide an IQV statistic for any network and for any categorical variable.  A function is a simple way to create code that is both reusable and easier to edit.
-
-我們對節點的許多屬性感興趣。 為了節省時間並使我們的生活更好，我們將創建一個函數，為任何網絡和任何分類變量提供IQV統計。 函數是一種創建可重用和更易於編輯的代碼的簡單方法。
-
-
-
-========================================================
-
-
-```r
-get_iqvs <- function(graph, attribute) {
-
-# we have now defined a function, get_iqvs, that will take the graph "graph" and find the iqv statistic for the categorical variable "attribute." Within this function whenever we use the variables graph or attribute they correspond to the graph and variable we passed (provided) to the function
-
-# 我們現在定義了一個函數 get_iqvs，它將獲取圖形 "graph"，並為分類變量 "attribute" 找到 iqv 統計量．在這個函數中，每當我們使用變量圖或屬性，它們對應於我們傳遞（提供）到函數的圖和變量
-
-mat <- get.adjacency(graph)
-				
-# To make this function work on a wide variety of variables we
-# find out how many coded levels (unique responses) exist for
-# the attribute variable programatically
-
-	attr_levels = get.vertex.attribute(graph,
-	                                   attribute,
-	                                   V(graph))
-	
-	num_levels = length(unique(attr_levels))
-	iqvs = rep(0, nrow(mat))
-
-# Now that we know how many levels exist we want to loop
-# (go through) each actor in the network. Loops iterate through
-# each value in a range.  Here we are looking through each ego
-# in the range of egos starting at the first and ending at the
-# last.  The function nrow provides the number of rows in an
-# object and the ":" opperand specifies the range.  Between
-# the curly braces of the for loop ego will represent exactly
-# one value between 1 and the number of rows in the graph
-# object, iterating by one during each execution of the loop.
-
-	for (ego in 1:nrow(mat)) {
-		
-		# initialize actor-specific variables
-		alter_attr_counts = rep(0, num_levels)
-		num_alters_this_ego = 0
-		sq_fraction_sum = 0
-
-# For each ego we want to check each tied alter for the same
-# level on the variable attribute as the ego.
-	
-		for (alter in 1:ncol(mat)) {
-			
-			# only examine alters that are actually tied to ego
-			if (mat[ego, alter] == 1) {
-				
-				num_alters_this_ego = num_alters_this_ego + 1
-
-				# get the alter's level on the attribute 
-				alter_attr = get.vertex.attribute(graph, 
-				    attribute, (alter - 1))
-
-				# increment the count of alters with this level
-				# of the attribute by 1
-				alter_attr_counts[alter_attr + 1] =
-				    alter_attr_counts[alter_attr + 1] + 1
-			}
-		}
-
-		# now that we're done looping through all of the alters,
-		# get the squared fraction for each level of the attribute
-		# out of the total number of attributes
-		for (i in 1:num_levels) {
-			attr_fraction = alter_attr_counts[i] /
-			    num_alters_this_ego
-			sq_fraction_sum = sq_fraction_sum + attr_fraction ^ 2
-		}
-		
-		# now we can compute the ego's blau index...
-		blau_index = 1 - sq_fraction_sum
-		
-		# and the ego's IQV, which is just a normalized blau index
-		iqvs[ego] = blau_index / (1 - (1 / num_levels))
-	}
-
-# The final part of a function returns the calculated value.
-#  So if we called get_iqvs(testgraph, gender) return would
-# provide the iqvs for gender in the test graph.  If we are also
-# intersted in race we could simply change the function call
-# to get_iqvs(testgraph, race).  No need to write all this
-# code again for different variables.
-
-	return(iqvs)
-}
-```
-
-
-
-
-========================================================
-
-```r
-# For this data set, we'll look at homophily across departments, 
-# which is already coded 0-4, so no recoding is needed. 
-
-advice_iqvs <- get_iqvs(krack_advice, 'DEPT')
-advice_iqvs
-```
-
-```
- [1] 0.8333333 0.5555556 0.9500000 0.9461806 0.9500000 0.0000000 0.8984375
- [8] 0.8203125 0.9689349 0.9885204 0.9722222 0.6250000 0.9375000 0.7812500
-[15] 0.9656250 1.0156250 0.9500000 0.9385813 0.9400826 0.9461806 0.9297521
-```
-
-
-========================================================
-
-```r
-friendship_iqvs <- get_iqvs(krack_friendship, 'DEPT')
-friendship_iqvs
-```
-
-```
- [1] 0.9000000 0.9722222 0.6250000 1.0069444 0.9183673 0.9027778       NaN
- [8] 0.0000000       NaN 0.9693878 0.9985207 0.8593750 0.6250000 0.6250000
-[15] 0.9960938 0.9375000 0.9143519 0.0000000 0.9104938 0.6250000 0.7812500
-```
-
-
-========================================================
-
-```r
-reports_to_iqvs <- get_iqvs(krack_reports_to, 'DEPT')
-reports_to_iqvs
-```
-
-```
- [1]   0   0   0   0   0   0 NaN   0   0   0   0   0   0   0   0   0   0
-[18]   0   0   0   0
-```
-
-
-
-Question
-========================================================
-
-What does the herfindahl index reveal about attribute sorting in networks? What does it mean for each network?
-Extra-credit: What might be a better way to test the occurrence of homophily or segregation in a network? How might we code that in R?
-
-
-
+- Basic Graph Analytics Using igraph - Ricky Ho (<http://horicky.blogspot.tw/2012/04/basic-graph-analytics-using-igraph.html>)
 
